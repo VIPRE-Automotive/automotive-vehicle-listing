@@ -5,14 +5,90 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0' />
     <title>Home - <%= config.app_name %></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <!-- Navigation -->
     <%- include('partials/navigation', config) %>
 
-    <%- include('partials/sidebar', {}) %>
-    <h1> No content yet </h1>
+    <div class="columns p-0 m-0">
+      <!-- Sidebar -->
+      <div class="column is-2 has-background-light">
+        <%- include('partials/sidebar', {}) %>
+      </div>
+
+      <!-- Search Results -->
+      <div class="column is-10 p-4">
+        <!-- Listing Header -->
+        <section class="hero is-primary">
+          <div class="hero-body">
+            <p class="title">
+              <%= config.app_name %>
+            </p>
+            <p class="subtitle">
+              Current Vehicle Inventory
+            </p>
+          </div>
+        </section>
+
+        <!-- Search Configurator -->
+        <div class="columns p-0 m-0 is-vcentered">
+          <div class="column is-3">
+            <p>23 results</p>
+          </div>
+          <div class="column">
+            <div class="field is-horizontal is-pulled-right">
+              <div class="field-body">
+                <div class="field">
+                  <p class="control is-expanded">
+                    <div class="select is-fullwidth">
+                      <select>
+                        <option selected disabled>Filter</option>
+                        <option>All</option>
+                        <option>Available</option>
+                        <option>Sold</option>
+                      </select>
+                    </div>
+                  </p>
+                </div>
+                <div class="field">
+                  <p class="control is-expanded">
+                    <div class="select is-fullwidth">
+                      <select>
+                        <option selected disabled>Sort By</option>
+                        <option>Model Year</option>
+                        <option>Make</option>
+                        <option>Model</option>
+                        <option>Mileage</option>
+                        <option>Price</option>
+                      </select>
+                    </div>
+                  </p>
+                </div>
+                <div class="field has-addons">
+                  <p class="control">
+                    <button class="button" title="Card View" disabled>
+                      <span class="icon is-small">
+                        <i class="fas fa-border-all"></i>
+                      </span>
+                      <span>Grid</span>
+                    </button>
+                  </p>
+                  <p class="control">
+                    <button class="button" title="List View">
+                      <span class="icon is-small">
+                        <i class="fas fa-list"></i>
+                      </span>
+                      <span>List</span>
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
 
     <!-- Footer -->
     <%- include('partials/footer', config) %>
