@@ -88,6 +88,15 @@
             </div>
           </div>
         </div>
+
+        <!-- Search Results -->
+        <div class="columns is-multiline p-3">
+          <% for (let i = 0; i < 7; i++) { %>
+            <div class="column is-3">
+              <%- include('partials/resultCard.ejs') %>
+            </div>
+          <% } %>
+        </div>
       </div>
     </div>
 
