@@ -1,12 +1,13 @@
 // Imports
 import express from 'express';
-import RateLimit from 'express-rate-limit';
+import ratelimit from 'express-rate-limit';
+import qr from 'qrcode';
 
 // Instantiate router component
 const router = express.Router();
 
 // Use RateLimit Module
-router.use(new RateLimit({
+router.use(new ratelimit({
   windowMs: 15 * 1000,
   max: 5
 }));
@@ -18,18 +19,25 @@ router.use(new RateLimit({
  */
 router.get('/', async (request, response) => {
   // Send default response
-  response.send('<h1>Root</h1>');
+  response.status(404).send("");
 });
 
 /**
- * Temporary Endpoint Example
+ * Render a QR Code link for vehicle sharing
  *
  * @author Alec M.
- * @date 2021-11-11 17:52:00
+ * @date 2021-11-12 13:56:00
  */
-router.get('/test', async (request, response) => {
-  // TEMP
-  response.json({status: "failure", data: null, message: "unknown error"});
+router.get('/vehicle/:catalogID/qr', async (request, response) => {
+  try {
+    // Generate QR Image
+    const d = await qr.toDataURL("https://xyz.com");
+
+    // Send Data
+    response.send(d);
+  } catch (e) {
+    response.status(500).send("");
+  }
 });
 
 // Export Router
