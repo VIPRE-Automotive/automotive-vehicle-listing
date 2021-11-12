@@ -14,5 +14,10 @@ router.get('/', async (request, response) => {
   response.render('index', {config: {app_name: "Test App"}});
 });
 
+router.get('/vehicles/:vehicle', async (request, response) => {
+  // Send default response
+  response.render('listing', {config: {app_name: "Test App"}});  
+});
+
 // Export Router
 export default router;
