@@ -93,7 +93,11 @@
         <div class="columns is-multiline p-3">
           <% for (let i = 0; i < 7; i++) { %>
             <div class="column is-4">
-              <%- include('partials/item') %>
+              <%- include('partials/item', {price: 0,
+                owners: i+1,
+                epa: "22/17mpg",
+                mileage: Math.floor(Math.random() * 100000)
+              }) %>
             </div>
           <% } %>
         </div>
