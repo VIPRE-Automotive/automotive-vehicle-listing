@@ -37,26 +37,26 @@
     <!-- Pricing Table -->
     <% if (context.page !== "listing" && typeof(data.msrp) === "number" && typeof(data.price) === "number") { %>
       <div class="px-3 has-text-centered">
-        <table class="table is-bordered">
-          <thead>
-            <tr class='has-background-light'>
-              <th><b>Original MSRP</b></th>
-              <th><b>Our Price</b></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><%= data.msrp.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
-              <td><%= data.price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
-            </tr>
-          </tbody>
-        </table>
+        <nav class="level is-mobile">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Original MSRP</p>
+              <p class="title"><%= data.msrp.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Our Price</p>
+              <p class="title"><%= data.price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></p>
+            </div>
+          </div>
+        </nav>
       </div>
     <% } %>
   </div>
 
   <footer class="card-footer">
-    <a href="#" class="card-footer-item">View More Details</a>
+    <a href="<%= data.link %>" class="card-footer-item">View More Details</a>
     <a href="#" class="card-footer-item">Share</a>
   </footer>
 </div>
