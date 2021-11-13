@@ -10,22 +10,22 @@
         <p class="title is-4">2018 Chrysler Town & Country</p>
         <p class="subtitle is-6">
           <!-- Basic Attributes -->
-          <% if (typeof(mileage) === "number" && mileage > 0) { %>
-            <span><%= (Math.round(Number(mileage) / 100) * 100).toLocaleString()  %>mi</span>
+          <% if (typeof(data.mileage) === "number" && data.mileage > 0) { %>
+            <span><%= (Math.round(Number(data.mileage) / 100) * 100).toLocaleString()  %>mi</span>
           <% } %>
-          <% if (typeof(epa) === "object" && typeof(epa.City) === "number" && typeof(epa.Highway) === "number") { %>
+          <% if (typeof(data.epa) === "object" && typeof(data.epa.City) === "number" && typeof(data.epa.Highway) === "number") { %>
             &middot;
-            <span>EPA <%= epa.City %> / <%= epa.Highway %>mpg</span>
+            <span>EPA <%= data.epa.City %> / <%= data.epa.Highway %>mpg</span>
           <% } %>
 
           <!-- Feature Tags -->
-          <% if (owners && owners === 1) { %>
+          <% if (data.owners && data.owners === 1) { %>
             &middot;
             <span class="tag is-success">1 OWNER</span>
-          <% } else if (typeof(mileage) === "number" && mileage <= 20000) { %>
+          <% } else if (typeof(data.mileage) === "number" && data.mileage <= 20000) { %>
             &middot;
             <span class="tag is-info">LOW MILES</span>
-          <% } else if (typeof(epa) === "object" && typeof(epa.City) === "number" && typeof(epa.Highway) === "number" && (epa.City >= 35 || epa.Highway >= 35)) { %>
+          <% } else if (typeof(data.epa) === "object" && typeof(data.epa.City) === "number" && typeof(data.epa.Highway) === "number" && (data.epa.City >= 35 || data.epa.Highway >= 35)) { %>
             &middot;
             <span class="tag is-primary">Fuel Efficient</span>
           <% } %>
@@ -35,7 +35,7 @@
   </div>
   <div class="content">
     <!-- Pricing Table -->
-    <% if (typeof(msrp) === "number" && typeof("price") === "number") { %>
+    <% if (context.page !== "listing" && typeof(data.msrp) === "number" && typeof(data.price) === "number") { %>
       <div class="px-3 has-text-centered">
         <table class="table is-bordered">
           <thead>
@@ -46,8 +46,8 @@
           </thead>
           <tbody>
             <tr>
-              <td><%= msrp %></td>
-              <td><%= price %></td>
+              <td><%= data.msrp %></td>
+              <td><%= data.price %></td>
             </tr>
           </tbody>
         </table>
