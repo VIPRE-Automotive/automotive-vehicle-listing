@@ -124,9 +124,12 @@
                   page: "index",
                 },
                 "data": {
+                  model_year: Math.floor(Math.random() * (2022 - 2017) + 2016),
+                  make: "",
+                  model: faker.vehicle.vehicle(),
                   link: "/vehicles/" + i,
-                  price: Math.floor(Math.random() * (32500 - 28000 + 1) + 28000),
-                  msrp: 32500,
+                  price: parseInt(faker.commerce.price(15000, 45000, 0, "")),
+                  msrp: parseInt(faker.commerce.price(16000, 50000, 0, "")),
                   owners: Math.floor(Math.random() * 3) + 1,
                   epa: {
                     "City": 26,
