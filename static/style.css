@@ -6,3 +6,24 @@ body {
   cursor: pointer;
   box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
 }
+
+.card.is-out-of-stock {
+  opacity: 0.8;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  user-select: none;
+  position: relative;
+}
+
+.card.is-out-of-stock::before {
+  content: " SOLD ";
+  color: #3b3b3b;
+  font-weight: bold;
+  font-size: 65px;
+  opacity: 0.7;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  z-index: 999;
+}

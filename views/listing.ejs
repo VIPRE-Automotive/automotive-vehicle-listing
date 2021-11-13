@@ -25,11 +25,41 @@
     <div class='container'>
       <h1 class="title">2019 BMW 335i</h1>
       <!-- table of NHTSA properties or options? -->
+      <table class="table is-hoverable">
+        <thead>
+          <tr>
+            <th>One</th>
+            <th>Two</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Three</td>
+            <td>Four</td>
+          </tr>
+          <tr>
+            <td>Five</td>
+            <td>Six</td>
+          </tr>
+          <tr>
+            <td>Seven</td>
+            <td>Eight</td>
+          </tr>
+          <tr>
+            <td>Nine</td>
+            <td>Ten</td>
+          </tr>
+          <tr>
+            <td>Eleven</td>
+            <td>Twelve</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Vehicle Recommendations -->
     <% if (true === true) { %>
-      <section class="hero is-light">
+      <section class="hero is-light mt-5">
         <div class="hero-body">
           <p class="title">
             Similar Vehicles
@@ -39,7 +69,7 @@
           </p>
         </div>
       </section>
-      <div class='container'>
+      <div class='container py-5'>
         <div class="columns p-3">
           <% for (let i = 0; i < 3; i++) { %>
             <div class="column is-4">
@@ -48,6 +78,7 @@
                   "page": "listing",
                 },
                 "data": {
+                  sold: i == 2 ? true : false,
                   model_year: Math.floor(Math.random() * (2022 - 2017) + 2016),
                   make: "",
                   model: faker.vehicle.vehicle(),
