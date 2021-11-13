@@ -34,8 +34,34 @@
 
         <!-- Search Configurator -->
         <div class="columns p-0 m-0 py-3 is-vcentered">
-          <div class="column is-3 p-0">
-            <p>23 results</p>
+          <div class="column is-6 p-0">
+            <nav class="level">
+              <div class="level-left">
+                <div class="level-item">
+                  <p class="subtitle is-7">
+                    <strong>Search Filters</strong>
+                  </p>
+                </div>
+                <div class="level-item">
+                  <div class="tags has-addons">
+                    <span class="tag">Year (2019+)</span>
+                    <a class="tag is-delete"></a>
+                  </div>
+                </div>
+                <div class="level-item">
+                  <div class="tags has-addons">
+                    <span class="tag">Make (BMW)</span>
+                    <a class="tag is-delete"></a>
+                  </div>
+                </div>
+                <div class="level-item">
+                  <div class="tags has-addons">
+                    <span class="tag">Transmission (A/T)</span>
+                    <a class="tag is-delete"></a>
+                  </div>
+                </div>
+              </div>
+            </nav>
           </div>
           <div class="column p-0">
             <div class="field is-horizontal is-pulled-right">
@@ -98,6 +124,7 @@
                   page: "index",
                 },
                 "data": {
+                  link: "/vehicles/" + i,
                   price: 0,
                   msrp: 32500,
                   owners: Math.floor(Math.random() * 3) + 1,
@@ -127,8 +154,8 @@
               <a class="pagination-link" aria-label="Goto page 3">3</a>
             </li>
           </ul>
-        </nav>  
-      </div>    
+        </nav>
+      </div>
     </div>
 
     <!-- Footer -->
