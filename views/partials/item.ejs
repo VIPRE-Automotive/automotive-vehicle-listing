@@ -46,8 +46,8 @@
           </thead>
           <tbody>
             <tr>
-              <td><%= data.msrp %></td>
-              <td><%= data.price %></td>
+              <td><%= data.msrp.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
+              <td><%= data.price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
             </tr>
           </tbody>
         </table>
