@@ -1,7 +1,7 @@
 <div class="card">
   <div class="card-image">
     <figure class="image is-4by3">
-      <img src="https://bulma.io/images/placeholders/1280x960.png" alt="vehicle image">
+      <img src="https://via.placeholder.com/1280x960" alt="Product image">
     </figure>
   </div>
   <div class="card-content">
@@ -9,38 +9,50 @@
       <div class="media-content">
         <p class="title is-4">2018 Chrysler Town & Country</p>
         <p class="subtitle is-6">
-          <span><%= (Math.round(Number(mileage) / 100) * 100).toLocaleString()  %>mi</span>
+          <!-- Basic Attributes -->
+          <% if (typeof(mileage) === "number" && mileage > 0) { %>
+            <span><%= (Math.round(Number(mileage) / 100) * 100).toLocaleString()  %>mi</span>
+          <% } %>
+          <% if (typeof(epa) === "object" && typeof(epa.City) === "number" && typeof(epa.Highway) === "number") { %>
+            &middot;
+            <span>EPA <%= epa.City %> / <%= epa.Highway %>mpg</span>
+          <% } %>
+
+          <!-- Feature Tags -->
           <% if (owners && owners === 1) { %>
             &middot;
             <span class="tag is-success">1 OWNER</span>
           <% } else if (typeof(mileage) === "number" && mileage <= 20000) { %>
             &middot;
             <span class="tag is-info">LOW MILES</span>
-          <% } else if (typeof(epa) === "string") { %>
+          <% } else if (typeof(epa) === "object" && typeof(epa.City) === "number" && typeof(epa.Highway) === "number" && (epa.City >= 35 || epa.Highway >= 35)) { %>
             &middot;
-            <span>EPA <%= epa %></span>
+            <span class="tag is-primary">Fuel Efficient</span>
           <% } %>
         </p>
       </div>
     </div>    
   </div>
   <div class="content">
-    <div class="px-3 has-text-centered">
-      <table class="table is-bordered">
-        <thead>
-          <tr>
-            <th><b>Factory MSRP</b></th>
-            <th><b>Our Price</b></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>$29,750</td>
-            <td>$26,500</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <!-- Pricing Table -->
+    <% if (typeof(msrp) === "number" && typeof("price") === "number") { %>
+      <div class="px-3 has-text-centered">
+        <table class="table is-bordered">
+          <thead>
+            <tr>
+              <th><b>Factory MSRP</b></th>
+              <th><b>Our Price</b></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><% msrp %></td>
+              <td><% price %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
   </div>
 
   <footer class="card-footer">

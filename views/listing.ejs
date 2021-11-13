@@ -42,9 +42,14 @@
         <div class="columns p-3">
           <% for (let i = 0; i < 3; i++) { %>
             <div class="column is-4">
-              <%- include('partials/item', {price: 0,
+              <%- include('partials/item', {
+                price: 30150,
+                msrp: 32900
                 owners: i+1,
-                epa: "22/17mpg",
+                epa: [
+                  "City": 36,
+                  "Highway": 30
+                ],
                 mileage: Math.floor(Math.random() * 100000)
               }) %>
             </div>
