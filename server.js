@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Configure Endpoints
-app.use(express.static("client"));
+app.use(express.static("static"));
 app.use("/", routes.main);
 app.use("/api", routes.api);
 
