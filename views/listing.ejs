@@ -13,27 +13,45 @@
     <%- include('partials/navigation', config) %>
 
     <!-- Breadcrumbs -->
+    <nav class="breadcrumb has-bullet-separator p-5" aria-label="breadcrumbs">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Search Results</a></li>
+        <li class="is-active"><a href="#" aria-current="page">2009 BMW 335i (#281)</a></li>
+      </ul>
+    </nav>
+
+    <!-- Vehicle Information Container -->
     <div class='container'>
-      <nav class="breadcrumb has-bullet-separator" aria-label="breadcrumbs">
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Search</a></li>
-          <li class="is-active"><a href="#" aria-current="page">2009 BMW 335i (#281)</a></li>
-        </ul>
-      </nav>
+      <h1 class="title">2009 BMW 335i</h1>
     </div>
     
-    <!-- Similar Vehicles Recommendation -->
-    <section class="hero">
-      <div class="hero-body">
-        <p class="title">
-          Similar Vehicles
-        </p>
-        <p class="subtitle">
-          You may also be interested in these vehicles
-        </p>
+    <!-- Vehicle Recommendations -->
+    <% if (true === true) { %>
+      <section class="hero">
+        <div class="hero-body">
+          <p class="title">
+            Similar Vehicles
+          </p>
+          <p class="subtitle">
+            You may also be interested in these vehicles
+          </p>
+        </div>
+      </section>    
+      <div class='container'>
+        <div class="columns p-3">
+          <% for (let i = 0; i < 3; i++) { %>
+            <div class="column is-4">
+              <%- include('partials/item', {price: 0,
+                owners: i+1,
+                epa: "22/17mpg",
+                mileage: Math.floor(Math.random() * 100000)
+              }) %>
+            </div>
+          <% } %>
+        </div>      
       </div>
-    </section>    
+    <% } %>
 
     <!-- Footer -->
     <%- include('partials/footer', config) %>
