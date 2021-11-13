@@ -99,8 +99,12 @@
                 },
                 "data": {
                   price: 0,
-                  owners: i+1,
-                  epa: "22/17mpg",
+                  msrp: 32500,
+                  owners: Math.floor(Math.random() * 3) + 1,
+                  epa: {
+                    "City": 26,
+                    "Highway": 32
+                  },
                   mileage: Math.floor(Math.random() * 100000)
                 },
               }) %>

@@ -34,10 +34,6 @@
     </div>    
   </div>
   <div class="content">
-    <%= context.page %>
-    <%= context.page !== "listing" %>
-    <%= typeof(data.msrp) %>
-    <%= typeof(data.price) %>
     <!-- Pricing Table -->
     <% if (context.page !== "listing" && typeof(data.msrp) === "number" && typeof(data.price) === "number") { %>
       <div class="px-3 has-text-centered">
