@@ -24,8 +24,9 @@
     <!-- Vehicle Information Container -->
     <div class='container'>
       <h1 class="title">2019 BMW 335i</h1>
+      <!-- table of NHTSA properties or options? -->
     </div>
-    
+
     <!-- Vehicle Recommendations -->
     <% if (true === true) { %>
       <section class="hero is-light">
@@ -37,7 +38,7 @@
             You may also be interested in these vehicles
           </p>
         </div>
-      </section>    
+      </section>
       <div class='container'>
         <div class="columns p-3">
           <% for (let i = 0; i < 3; i++) { %>
@@ -47,6 +48,7 @@
                   "page": "listing",
                 },
                 "data": {
+                  link: "/vehicles/" + i,
                   price: 30150,
                   msrp: 32900,
                   owners: Math.floor(Math.random() * 3) + 1,
@@ -59,7 +61,7 @@
               }) %>
             </div>
           <% } %>
-        </div>      
+        </div>
       </div>
     <% } %>
 
