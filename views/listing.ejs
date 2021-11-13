@@ -44,12 +44,12 @@
             <div class="column is-4">
               <%- include('partials/item', {
                 "context": {
-                  "page": "listing"
+                  "page": "listing",
                 },
                 "data": {
                   price: 30150,
                   msrp: 32900,
-                  owners: i+1,
+                  owners: Math.floor(Math.random() * 3) + 1,
                   epa: {
                     "City": 36,
                     "Highway": 30
