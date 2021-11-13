@@ -1,13 +1,16 @@
 <div class="card">
+  <!-- Card Image -->
   <div class="card-image">
     <figure class="image is-4by3">
       <img src="https://via.placeholder.com/1280x960" alt="Product image">
     </figure>
   </div>
+
+  <!-- Card Tags -->
   <div class="card-content">
     <div class="media">
       <div class="media-content">
-        <p class="title is-4">2018 Chrysler Town & Country</p>
+        <p class="title is-4"><%= data.model_year %> <%= data.make %> <%= data.model %></p>
         <p class="subtitle is-6">
           <!-- Basic Attributes -->
           <% if (typeof(data.mileage) === "number" && data.mileage > 0) { %>
@@ -33,9 +36,10 @@
       </div>
     </div>
   </div>
-  <div class="content">
-    <!-- Pricing Table -->
-    <% if (context.page !== "listing" && typeof(data.msrp) === "number" && typeof(data.price) === "number") { %>
+
+  <!-- Pricing Table -->
+  <% if (context.page !== "listing" && typeof(data.msrp) === "number" && typeof(data.price) === "number") { %>
+    <div class="content">
       <div class="px-3 has-text-centered">
         <nav class="level is-mobile">
           <div class="level-item has-text-centered">
@@ -52,9 +56,10 @@
           </div>
         </nav>
       </div>
-    <% } %>
-  </div>
+    </div>
+  <% } %>
 
+  <!-- Card Footer -->
   <footer class="card-footer">
     <a href="<%= data.link %>" class="card-footer-item">View More Details</a>
     <a href="#" class="card-footer-item">Share</a>
