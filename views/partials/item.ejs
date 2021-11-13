@@ -9,15 +9,13 @@
       <div class="media-content">
         <p class="title is-4">2018 Chrysler Town & Country</p>
         <p class="subtitle is-6">
-          <span><%= price %></span>
-          &middot;
-          <span><%= Number(mileage).toLocaleString()  %>mi</span>
+          <span><%= (Math.round(Number(mileage) / 100) * 100).toLocaleString()  %>mi</span>
           <% if (owners && owners === 1) { %>
             &middot;
             <span class="tag is-success">1 OWNER</span>
           <% } else if (typeof(mileage) === "number" && mileage <= 20000) { %>
             &middot;
-            <span class="tag is-success">LOW MILES</span>
+            <span class="tag is-info">LOW MILES</span>
           <% } else if (typeof(epa) === "string") { %>
             &middot;
             <span>EPA <%= epa %></span>
@@ -27,11 +25,22 @@
     </div>    
   </div>
   <div class="content">
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-    <a href="#">#css</a> <a href="#">#responsive</a>
-    <br>
-    <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+    <div class="px-3 has-text-centered">
+      <table class="table is-bordered">
+        <thead>
+          <tr>
+            <th><b>Factory MSRP</b></th>
+            <th><b>Our Price</b></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>$29,750</td>
+            <td>$26,500</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <footer class="card-footer">
