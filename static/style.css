@@ -27,3 +27,9 @@ body {
   transform: translate(-50%, -50%) rotate(-45deg);
   z-index: 999;
 }
+
+aside.menu .menu-list li:not(.is-active) > ul {
+  height: 0;
+  overflow: hidden;
+  margin: 0;
+}

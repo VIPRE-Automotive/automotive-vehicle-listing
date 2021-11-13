@@ -1,34 +1,180 @@
 <aside class="menu" style="position: sticky; top: 0.75rem;">
-  <p class="menu-label">
-    General
-  </p>
+  <p class="menu-label">Vehicle</p>
   <ul class="menu-list">
-    <li><a>Dashboard</a></li>
-    <li><a>Customers</a></li>
-  </ul>
-  <p class="menu-label">
-    Administration
-  </p>
-  <ul class="menu-list">
-    <li><a>Team Settings</a></li>
-    <li>
-      <a class="is-active">Manage Your Team</a>
+    <!-- Model Year Selection -->
+    <li class="is-active">
+      <a>Model Year</a>
       <ul>
-        <li><a>Members</a></li>
-        <li><a>Plugins</a></li>
-        <li><a>Add a member</a></li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox" checked>
+              All (7)
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox">
+              2022 (3)
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox">
+              2021 (2)
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox">
+              2020 (1)
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox">
+              2019 (3)
+            </label>
+          </a>
+        </li>
       </ul>
     </li>
-    <li><a>Invitations</a></li>
-    <li><a>Cloud Storage Environment Settings</a></li>
-    <li><a>Authentication</a></li>
+
+    <!-- Make Selection -->
+    <li>
+      <a>Make</a>
+      <ul>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox" checked>
+              All (7)
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox">
+              Toyota (3)
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox">
+              Ford (1)
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox">
+              Nissan (1)
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="checkbox">
+              <input type="checkbox">
+              BMW (1)
+            </label>
+          </a>
+        </li>
+      </ul>
+    </li>
   </ul>
-  <p class="menu-label">
-    Transactions
-  </p>
+  <p class="menu-label">Features</p>
   <ul class="menu-list">
-    <li><a>Payments</a></li>
-    <li><a>Transfers</a></li>
-    <li><a>Balance</a></li>
+    <!-- Tranmission Selection -->
+    <li>
+      <a>Transmission</a>
+      <ul>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="transmission">
+              All
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="transmission">
+              Automatic
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="transmission">
+              Manual
+            </label>
+          </a>
+        </li>
+      </ul>
+    </li>
   </ul>
+  <ul class="menu-list">
+    <li>
+      <a>Drivetrain</a>
+      <ul>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="drivetrain">
+              All
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="drivetrain">
+              AWD
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="drivetrain">
+              FWD
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="drivetrain">
+              RWD
+            </label>
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <!-- Control Buttons -->
+  <div class="columns mt-4 px-3">
+    <div class="column is-8 p-0">
+      <button class="button is-fullwidth">Search</button>
+    </div>
+    <div class="column p-0">
+      <button class="button is-text">Reset</button>
+    </div>
+  </div>
 </aside>
