@@ -1,5 +1,11 @@
 <table class="table is-hoverable">
   <tbody>
+    <% if (typeof(data.Odometer) === "number" && data.Odometer > 0) { %>
+      <tr>
+        <td>Odometer</td>
+        <td><%= (Math.round(Number(data.Odometer) / 100) * 100).toLocaleString()  %>mi</td>
+      </tr>
+    <% } %>
     <% if (typeof(data.ExtColor) === "object" && data.ExtColor.length > 0) { %>
       <tr>
         <td>Exterior Color</td>
@@ -32,6 +38,12 @@
       <tr>
         <td>Vehicle Identification Number (VIN)</td>
         <td><%= data.VIN.substr(0, 9) %><b class="is-underlined"><%= data.VIN.substr(9, 8) %></b></td>
+      </tr>
+    <% } %>
+    <% if (typeof(data.EPA) === "object" && typeof(data.EPA.City) === "number" && typeof(data.EPA.Highway) === "number") { %>
+      <tr>
+        <td>EPA Rated MPG</td>
+        <td><%= data.EPA.City %> City / <%= data.EPA.Highway %> Highway mpg</td>
       </tr>
     <% } %>
   </tbody>
