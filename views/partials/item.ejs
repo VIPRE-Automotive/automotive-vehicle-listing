@@ -13,8 +13,8 @@
         <p class="title is-4"><%= data.model_year %> <%= data.make %> <%= data.model %></p>
         <p class="subtitle is-6">
           <!-- Basic Attributes -->
-          <% if (typeof(data.mileage) === "number" && data.mileage > 0) { %>
-            <span><%= (Math.round(Number(data.mileage) / 100) * 100).toLocaleString()  %>mi</span>
+          <% if (typeof(data.Odometer) === "number" && data.Odometer > 0) { %>
+            <span><%= (Math.round(Number(data.Odometer) / 100) * 100).toLocaleString()  %>mi</span>
           <% } %>
           <% if (typeof(data.epa) === "object" && typeof(data.epa.City) === "number" && typeof(data.epa.Highway) === "number") { %>
             &middot;
@@ -25,7 +25,7 @@
           <% if (data.owners && data.owners === 1) { %>
             &middot;
             <span class="tag is-success">1 OWNER</span>
-          <% } else if (typeof(data.mileage) === "number" && data.mileage <= 20000) { %>
+          <% } else if (typeof(data.Odometer) === "number" && data.Odometer <= 20000) { %>
             &middot;
             <span class="tag is-info">LOW MILES</span>
           <% } else if (typeof(data.epa) === "object" && typeof(data.epa.City) === "number" && typeof(data.epa.Highway) === "number" && (data.epa.City >= 35 || data.epa.Highway >= 35)) { %>
