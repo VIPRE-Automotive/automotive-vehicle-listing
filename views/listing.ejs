@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0' />
-    <title>2019 BMW 335i - <%= config.app_name %></title>
+    <title>2019 BMW M550i - <%= config.app_name %></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
@@ -28,7 +28,11 @@
         <!-- Title -->
         <div class="column">
           <h1 class="title is-1">2019 BMW M550i xDrive</h1>
-          <p class="subtitle is-6">Red Dakota Leather &middot; Black Sapphire Metalic</p>
+          <div class="subtitle tags">
+            <span class="tag">$54,950</span>
+            <span class="tag">13,000mi</span>
+            <span class="tag">Black Sapphire Metalic</span>
+          </div>
         </div>
 
         <!-- Controls -->
@@ -36,6 +40,7 @@
       </div>
 
       <div class="columns">
+        <!-- Image Columns -->
         <div class="column">
           <!-- Main Preview -->
           <figure class="image is-4by3 has-shadow-1">
@@ -65,19 +70,42 @@
           </div>
         </div>
 
+        <!-- Content Column -->
         <div class="column">
+          <div class="content">
+            <h1>First Heading</h1>
+            <p>Lorem ipsum<sup><a>[1]</a></sup> dolor sit amet, consectetur adipiscing elit. Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus, nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio, sollicitudin vel erat vel, interdum mattis neque. Sub<sub>script</sub> works as well!</p>
+            <h2>Second Heading</h2>
+            <p>Curabitur accumsan turpis pharetra <strong>augue tincidunt</strong> blandit. Quisque condimentum maximus mi, sit amet commodo arcu rutrum id. Proin pretium urna vel cursus venenatis. Suspendisse potenti. Etiam mattis sem rhoncus lacus dapibus facilisis. Donec at dignissim dui. Ut et neque nisl.</p>
+            <ul>
+              <li>In fermentum leo eu lectus mollis, quis dictum mi aliquet.</li>
+              <li>Morbi eu nulla lobortis, lobortis est in, fringilla felis.</li>
+              <li>Aliquam nec felis in sapien venenatis viverra fermentum nec lectus.</li>
+              <li>Ut non enim metus.</li>
+            </ul>
+            <h2>Second Heading</h2>
+            <p>Nulla efficitur eleifend nisi, sit amet bibendum sapien fringilla ac. Mauris euismod metus a tellus laoreet, at elementum ex efficitur.</p>
+            <p>Maecenas eleifend sollicitudin dui, faucibus sollicitudin augue cursus non. Ut finibus eleifend arcu ut vehicula. Mauris eu est maximus est porta condimentum in eu justo. Nulla id iaculis sapien.</p>
+
+            <!-- Vehicle Properties -->
+            <%- include("partials/listTable", {
+              data: {
+                StockNum: 3985,
+                VIN: faker.vehicle.vin(),
+                ExtColor: ["Black Sapphire Metalic", "#08070d"],
+                IntColor: ["Red Dakota Leather", "#8b1c24"],
+                Odometer: 19500,
+                EPA: {
+                  City: 22,
+                  Highway: 27
+                },
+              },
+            }) %>
+
+            <p>Phasellus porttitor enim id metus volutpat ultricies. Ut nisi nunc, blandit sed dapibus at, vestibulum in felis. Etiam iaculis lorem ac nibh bibendum rhoncus.</p>
+          </div>
         </div>
       </div>
-
-      <!-- Vehicle Properties -->
-      <%- include("partials/listTable", {
-        data: {
-          StockNum: 3985,
-          VIN: faker.vehicle.vin(),
-          ExtColor: ["Black Sapphire Metalic", "#08070d"],
-          IntColor: ["Red Dakota Leather", "#8b1c24"],
-        },
-      }) %>
     </div>
 
     <!-- Vehicle Recommendations -->
