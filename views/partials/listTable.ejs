@@ -1,5 +1,27 @@
 <table class="table is-hoverable">
   <tbody>
+    <% if (typeof(data.ExtColor) === "object" && data.ExtColor.length > 0) { %>
+      <tr>
+        <td>Exterior Color</td>
+        <td>
+          <%= data.ExtColor[0] %>
+          <% if (typeof(data.ExtColor[1]) === "string") { %>
+            <div class="is-color-block" style="background-color: <%= data.ExtColor[1] %>;"></div>
+          <% } %>
+        </td>
+      </tr>
+    <% } %>
+    <% if (typeof(data.IntColor) === "object" && data.IntColor.length > 0) { %>
+      <tr>
+        <td>Exterior Color</td>
+        <td>
+          <%= data.IntColor[0] %>
+          <% if (typeof(data.IntColor[1]) === "string") { %>
+            <div class="is-color-block" style="background-color: <%= data.IntColor[1] %>;"></div>
+          <% } %>
+        </td>
+      </tr>
+    <% } %>
     <% if (typeof(data.StockNum) === "number" && data.StockNum > 0) { %>
       <tr>
         <td>Stock #</td>
