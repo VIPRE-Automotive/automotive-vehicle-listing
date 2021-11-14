@@ -23,38 +23,43 @@
 
     <!-- Vehicle Information Container -->
     <div class='container'>
-      <h1 class="title">2019 BMW 335i</h1>
-      <!-- table of NHTSA properties or options? -->
-      <table class="table is-hoverable">
-        <thead>
-          <tr>
-            <th>One</th>
-            <th>Two</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Three</td>
-            <td>Four</td>
-          </tr>
-          <tr>
-            <td>Five</td>
-            <td>Six</td>
-          </tr>
-          <tr>
-            <td>Seven</td>
-            <td>Eight</td>
-          </tr>
-          <tr>
-            <td>Nine</td>
-            <td>Ten</td>
-          </tr>
-          <tr>
-            <td>Eleven</td>
-            <td>Twelve</td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Page Title -->
+      <h1 class="title is-1">2019 BMW M550i</h1>
+      <p class="subtitle is-5">Blue &middot; Black Sapphire Metalic</p>
+
+      <div class="columns">
+        <div class="column">
+          <!-- Main Preview -->
+          <figure class="image is-4by3 has-shadow-1">
+            <img src="https://via.placeholder.com/1280x960" alt="Product image" />
+          </figure>
+
+          <!-- Other Images -->
+          <div class="is-flex mt-1">
+            <figure class="image is-96x96 mr-1 has-radius-6">
+              <img src="https://via.placeholder.com/256x256" alt="Product image" />
+            </figure>
+            <figure class="image is-96x96 mr-1 has-radius-6">
+              <img src="https://via.placeholder.com/256x256" alt="Product image" />
+            </figure>
+            <figure class="image is-96x96 mr-1 has-radius-6">
+              <img src="https://via.placeholder.com/256x256" alt="Product image" />
+            </figure>
+          </div>
+        </div>
+
+        <div class="column">
+        </div>
+      </div>
+
+      <!-- Vehicle Properties -->
+      <%- include("partials/listTable", {
+        data: {
+          StockNum: 3985,
+          VIN: faker.vehicle.vin(),
+          ExtColor: ["Black Sapphire Metalic", "#08070d"]
+        },
+      }) %>
     </div>
 
     <!-- Vehicle Recommendations -->
