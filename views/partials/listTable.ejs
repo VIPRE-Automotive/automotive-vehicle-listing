@@ -1,5 +1,17 @@
 <table class="table is-hoverable">
   <tbody>
+    <% if (typeof(data.Price) === "number") { %>
+      <tr>
+        <td>Our Price</td>
+        <td><b><%= data.Price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></b>*</td>
+      </tr>
+    <% } %>
+    <% if (typeof(data.MSRP) === "number") { %>
+      <tr>
+        <td>Factory MSRP</td>
+        <td><%= data.MSRP.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
+      </tr>
+    <% } %>
     <% if (typeof(data.Odometer) === "number" && data.Odometer > 0) { %>
       <tr>
         <td>Odometer</td>
