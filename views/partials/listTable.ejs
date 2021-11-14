@@ -1,0 +1,16 @@
+<table class="table is-hoverable">
+  <tbody>
+    <% if (typeof(data.StockNum) === "number" && data.StockNum > 0) { %>
+      <tr>
+        <td>Stock #</td>
+        <td><%= data.StockNum %></td>
+      </tr>
+    <% } %>
+    <% if (typeof(data.VIN) === "string" && data.VIN.length === 17) { %>
+      <tr>
+        <td>Vehicle Identification Number (VIN)</td>
+        <td><%= data.VIN.substr(0, 9) %><b class="is-underlined"><%= data.VIN.substr(9, 8) %></b></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
