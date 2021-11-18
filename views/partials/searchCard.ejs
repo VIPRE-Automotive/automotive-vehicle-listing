@@ -13,6 +13,13 @@
               }) %>
             </span>
           <% } %>
+          <% if (typeof(data.ExtColor) === "object" && typeof(data.ExtColor[0]) === "string" && typeof(data.IntColor) === "object" && typeof(data.IntColor[0]) === "string") { %>
+            <span class="tag">
+              <%= data.ExtColor[0] %>
+              &middot;
+              <%= data.IntColor[0] %>
+            </span>
+          <% } %>
           <% if (typeof(data.Odometer) === "number") { %>
             <span class="tag">
               <%= (Math.round(Number(data.Odometer) / 100) * 100).toLocaleString() %>mi
