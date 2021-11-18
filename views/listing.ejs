@@ -63,7 +63,7 @@
 
       <div class="columns">
         <!-- Image Columns -->
-        <div class="column">
+        <div class="column has-background-light has-radius-6" style="align-self: flex-start">
           <!-- Main Preview -->
           <figure class="image is-4by3 has-shadow-1">
             <img src="https://via.placeholder.com/1280x960" alt="Product image" />
@@ -90,10 +90,27 @@
               <img src="https://via.placeholder.com/256x256" alt="Product image6" />
             </figure>
           </div>
+
+          <!-- Share Card -->
+          <div class="card is-static mt-3">
+            <div class="card-content">
+              <div class="media">
+                <div class="media-left">
+                  <figure class="image is-48x48">
+                    <img src="/api/qr/<%= vehicle.StockNum %>" alt="Share QR Code" />
+                  </figure>
+                </div>
+                <div class="media-content">
+                  <p class="title is-4">Share with a friend</p>
+                  <p class="subtitle is-6">https://example.com/vehicles/2</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Content Column -->
-        <div class="column">
+        <div class="column pt-0">
           <div class="content">
             <h1>First Heading</h1>
             <p>Lorem ipsum<sup><a>[1]</a></sup> dolor sit amet, consectetur adipiscing elit. Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus, nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio, sollicitudin vel erat vel, interdum mattis neque. Sub<sub>script</sub> works as well!</p>
@@ -113,23 +130,6 @@
             <%- include("partials/listTable", {data: vehicle}) %>
 
             <p>Phasellus porttitor enim id metus volutpat ultricies. Ut nisi nunc, blandit sed dapibus at, vestibulum in felis. Etiam iaculis lorem ac nibh bibendum rhoncus.</p>
-
-            <!-- Share Card -->
-            <div class="card is-static">
-              <div class="card-content">
-                <div class="media">
-                  <div class="media-left">
-                    <figure class="image is-48x48">
-                      <img src="/api/qr/<%= vehicle.StockNum %>" alt="Share QR Code" />
-                    </figure>
-                  </div>
-                  <div class="media-content">
-                    <p class="title is-4">Share with a friend</p>
-                    <p class="subtitle is-6">https://example.com/vehicles/2</p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
