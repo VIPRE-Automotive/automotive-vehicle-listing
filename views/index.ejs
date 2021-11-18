@@ -30,7 +30,10 @@
               <%= config.application.Name %>
             </p>
             <p class="subtitle">
-              Current Vehicle Inventory &middot; <em>2014 or Newer Vans</em>
+              Current Vehicle Inventory
+              <% if (typeof(context.query) === "string") { %>
+                &middot; <em><%= context.query %></em>
+              <% } %>
             </p>
           </div>
         </section>
@@ -118,49 +121,43 @@
         </div>
 
         <!-- Search Results -->
-        <div class="columns is-multiline">
-          <% for (let i = 0; i < 7; i++) { %>
-            <div class="column is-4">
-              <%- include('partials/item', {
-                "context": {
-                  page: "index",
-                },
-                "data": {
-                  sold: i == 2 ? true : false,
-                  model_year: Math.floor(Math.random() * (2022 - 2017) + 2016),
-                  make: "",
-                  model: faker.vehicle.vehicle(),
-                  link: "/vehicles/" + i,
-                  price: parseInt(faker.commerce.price(15000, 45000, 0, "")),
-                  msrp: parseInt(faker.commerce.price(16000, 50000, 0, "")),
-                  owners: Math.floor(Math.random() * 3) + 1,
-                  epa: {
-                    "City": 26,
-                    "Highway": 32
+        <% if (typeof(vehicles) === "object" && vehicles instanceof Array && vehicles.length > 0) { %>
+          <div class="columns is-multiline">
+            <% const limit = vehicles.length > config.options.search_pagination ? config.options.search_pagination : vehicles.length; %>
+            <% for (let i = 0; i < limit; i++) { %>
+              <div class="column is-4">
+                <%- include('partials/item', {
+                  context: {
+                    page: "index",
                   },
-                  Odometer: Math.floor(Math.random() * 100000)
-                },
-              }) %>
-            </div>
-          <% } %>
-        </div>
+                  data: vehicles[i],
+                }) %>
+              </div>
+            <% } %>
+          </div>
+        <% } else { %>
+          <h2>No search results ...? </h2>
+        <% } %>
 
         <!-- Search Pagination -->
-        <nav class="pagination" role="navigation" aria-label="pagination">
-          <a class="pagination-previous is-disabled" title="This is the first page">Previous</a>
-          <a class="pagination-next">Next page</a>
-          <ul class="pagination-list">
-            <li>
-              <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
-            </li>
-            <li>
-              <a class="pagination-link" aria-label="Goto page 2">2</a>
-            </li>
-            <li>
-              <a class="pagination-link" aria-label="Goto page 3">3</a>
-            </li>
-          </ul>
-        </nav>
+        <% if (typeof(vehicles) === "object" && vehicles instanceof Array && vehicles.length > config.options.search_pagination) { %>
+          <nav class="pagination" role="navigation" aria-label="pagination">
+            <a class="pagination-previous is-disabled" title="This is the first page">Previous</a>
+            <a class="pagination-next">Next page</a>
+            <ul class="pagination-list">
+              <li>
+                <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
+              </li>
+
+              <% const paginationCount = Math.ceil(vehicles.length / config.options.search_pagination); %>
+              <% for (let i = 1; i < paginationCount; i++) { %>
+                <li>
+                  <a class="pagination-link" aria-label="Goto page <%= i+1 %>"><%= i+1 %></a>
+                </li>
+              <% } %>
+            </ul>
+          </nav>
+        <% } %>
       </div>
     </div>
 

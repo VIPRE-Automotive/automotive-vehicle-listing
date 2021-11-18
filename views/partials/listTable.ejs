@@ -12,6 +12,18 @@
         <td><%= data.MSRP.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
       </tr>
     <% } %>
+    <% if (typeof(data.Trim) === "string" && data.Trim.length > 0) { %>
+      <tr>
+        <td>Trim</td>
+        <td><%= data.Trim %></td>
+      </tr>
+    <% } %>
+    <% if (typeof(data.Drivetrain) === "string" && data.Drivetrain.length > 0) { %>
+      <tr>
+        <td>Drivetrain</td>
+        <td><%= data.Drivetrain %></td>
+      </tr>
+    <% } %>
     <% if (typeof(data.Odometer) === "number" && data.Odometer > 0) { %>
       <tr>
         <td>Odometer</td>

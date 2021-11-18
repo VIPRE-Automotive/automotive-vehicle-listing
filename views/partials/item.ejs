@@ -1,4 +1,4 @@
-<div class="card <%= data.sold ? 'is-out-of-stock' : '' %>">
+<div class="card <%= data.Sold ? 'is-out-of-stock' : '' %>">
   <!-- Card Image -->
   <div class="card-image">
     <figure class="image is-4by3">
@@ -10,25 +10,25 @@
   <div class="card-content">
     <div class="media">
       <div class="media-content">
-        <p class="title is-4"><%= data.model_year %> <%= data.make %> <%= data.model %></p>
+        <p class="title is-4"><%= data.ModelYear %> <%= data.Make %> <%= data.Model %></p>
         <p class="subtitle is-6">
           <!-- Basic Attributes -->
           <% if (typeof(data.Odometer) === "number" && data.Odometer > 0) { %>
             <span><%= (Math.round(Number(data.Odometer) / 100) * 100).toLocaleString()  %>mi</span>
           <% } %>
-          <% if (typeof(data.epa) === "object" && typeof(data.epa.City) === "number" && typeof(data.epa.Highway) === "number") { %>
+          <% if (typeof(data.EPA) === "object" && typeof(data.EPA.City) === "number" && typeof(data.EPA.Highway) === "number") { %>
             &middot;
-            <span>EPA <%= data.epa.City %> / <%= data.epa.Highway %>mpg</span>
+            <span>EPA <%= data.EPA.City %> / <%= data.EPA.Highway %>mpg</span>
           <% } %>
 
           <!-- Feature Tags -->
-          <% if (data.owners && data.owners === 1) { %>
+          <% if (data.Owners && data.Owners === 1) { %>
             &middot;
             <span class="tag is-success">1 OWNER</span>
           <% } else if (typeof(data.Odometer) === "number" && data.Odometer <= 20000) { %>
             &middot;
             <span class="tag is-info">LOW MILES</span>
-          <% } else if (typeof(data.epa) === "object" && typeof(data.epa.City) === "number" && typeof(data.epa.Highway) === "number" && (data.epa.City >= 35 || data.epa.Highway >= 35)) { %>
+          <% } else if (typeof(data.EPA) === "object" && typeof(data.EPA.City) === "number" && typeof(data.EPA.Highway) === "number" && (data.EPA.City >= 35 || data.EPA.Highway >= 35)) { %>
             &middot;
             <span class="tag is-primary">Fuel Efficient</span>
           <% } %>
@@ -38,20 +38,32 @@
   </div>
 
   <!-- Pricing Table -->
-  <% if (context.page !== "listing" && typeof(data.msrp) === "number" && typeof(data.price) === "number") { %>
+  <% if (context.page !== "listing" && typeof(data.MSRP) === "number" && typeof(data.Price) === "number") { %>
     <div class="content">
       <div class="px-3 has-text-centered">
         <nav class="level is-mobile">
           <div class="level-item has-text-centered">
             <div>
               <p class="heading">Original MSRP</p>
-              <p class="title has-text-weight-normal"><%= data.msrp.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></p>
+              <p class="title has-text-weight-normal">
+                <%= data.MSRP.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 0
+                }) %>
+              </p>
             </div>
           </div>
           <div class="level-item has-text-centered">
             <div>
               <p class="heading">Our Price</p>
-              <p class="title"><%= data.price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></p>
+              <p class="title">
+                <%= data.Price.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 0
+                }) %>
+              </p>
             </div>
           </div>
         </nav>
@@ -61,7 +73,7 @@
 
   <!-- Card Footer -->
   <footer class="card-footer">
-    <a href="<%= data.link %>" class="card-footer-item">View More Details</a>
+    <a href="<%= data.Link %>" class="card-footer-item">View More Details</a>
     <a href="#" class="card-footer-item">Share</a>
   </footer>
 </div>

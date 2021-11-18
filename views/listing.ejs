@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <title>2019 BMW M550i - <%= config.application.Name %></title>
+    <title><%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %> - <%= config.application.Name %></title>
     <meta charset="utf-8" />
     <meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0' />
-    <meta property="og:title" content="2019 BMW M550i" />
+    <meta property="og:title" content="<%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %>" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://example.com/vehicles/2" />
     <meta property="og:image" content="https://via.placeholder.com/1280x960" />
@@ -20,8 +20,8 @@
     <nav class="breadcrumb has-bullet-separator p-5 has-background-light" aria-label="breadcrumbs">
       <ul>
         <li><a href="/">Home</a></li>
-        <li><a href="/">Search Results</a></li>
-        <li class="is-active"><a href="#" aria-current="page">2019 BMW M550i</a></li>
+        <li><a href="<%= context.queryLink %>">Search Results</a></li>
+        <li class="is-active"><a href="#" aria-current="page"><%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %></a></li>
       </ul>
     </nav>
 
@@ -30,12 +30,30 @@
       <!-- Page Header -->
       <div class="columns">
         <!-- Title -->
-        <div class="column">
-          <h1 class="title is-1">2019 BMW M550i xDrive</h1>
+        <div class="column is-10">
+          <h1 class="title is-1"><%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %> <%= vehicle.Trim %></h1>
           <div class="subtitle tags">
-            <span class="tag">$54,950</span>
-            <span class="tag">13,000mi</span>
-            <span class="tag">Black Sapphire Metalic</span>
+            <% if (typeof(vehicle.Price) === "number") { %>
+              <span class="tag">
+                <%= vehicle.Price.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 0
+                }) %>
+              </span>
+            <% } %>
+            <% if (typeof(vehicle.Odometer) === "number") { %>
+              <span class="tag">
+                <%= (Math.round(Number(vehicle.Odometer) / 100) * 100).toLocaleString() %>mi
+              </span>
+            <% } %>
+            <% if (typeof(vehicle.ExtColor) === "object" && typeof(vehicle.ExtColor[0]) === "string" && typeof(vehicle.IntColor) === "object" && typeof(vehicle.IntColor[0]) === "string") { %>
+              <span class="tag">
+                <%= vehicle.ExtColor[0] %>
+                &middot;
+                <%= vehicle.IntColor[0] %>
+              </span>
+            <% } %>
           </div>
         </div>
 
@@ -92,21 +110,7 @@
             <p>Maecenas eleifend sollicitudin dui, faucibus sollicitudin augue cursus non. Ut finibus eleifend arcu ut vehicula. Mauris eu est maximus est porta condimentum in eu justo. Nulla id iaculis sapien.</p>
 
             <!-- Vehicle Properties -->
-            <%- include("partials/listTable", {
-              data: {
-                StockNum: 3985,
-                VIN: faker.vehicle.vin(),
-                ExtColor: ["Black Sapphire Metalic", "#08070d"],
-                IntColor: ["Red Dakota Leather", "#8b1c24"],
-                Odometer: 19500,
-                EPA: {
-                  City: 22,
-                  Highway: 27
-                },
-                Price: 52500,
-                MSRP: 72990,
-              },
-            }) %>
+            <%- include("partials/listTable", {data: vehicle}) %>
 
             <p>Phasellus porttitor enim id metus volutpat ultricies. Ut nisi nunc, blandit sed dapibus at, vestibulum in felis. Etiam iaculis lorem ac nibh bibendum rhoncus.</p>
           </div>
@@ -115,7 +119,7 @@
     </div>
 
     <!-- Vehicle Recommendations -->
-    <% if (true === true) { %>
+    <% if (typeof(recommendations) === "object" && recommendations instanceof Array && recommendations.length > 0) { %>
       <section class="hero is-light mt-5">
         <div class="hero-body">
           <p class="title">Similar Vehicles</p>
@@ -124,27 +128,13 @@
       </section>
       <div class='container py-5'>
         <div class="columns p-3">
-          <% for (let i = 0; i < 3; i++) { %>
+          <% for (let i = 0; i < recommendations.length; i++) { %>
             <div class="column is-4">
               <%- include('partials/item', {
-                "context": {
+                context: {
                   "page": "listing",
                 },
-                "data": {
-                  sold: i == 2 ? true : false,
-                  model_year: Math.floor(Math.random() * (2022 - 2017) + 2016),
-                  make: "",
-                  model: faker.vehicle.vehicle(),
-                  link: "/vehicles/" + i,
-                  price: parseInt(faker.commerce.price(15000, 45000, 0, "")),
-                  msrp: parseInt(faker.commerce.price(16000, 50000, 0, "")),
-                  owners: Math.floor(Math.random() * 3) + 1,
-                  epa: {
-                    "City": 26,
-                    "Highway": 32
-                  },
-                  Odometer: Math.floor(Math.random() * 25000)
-                },
+                data: recommendations[i],
               }) %>
             </div>
           <% } %>
