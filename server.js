@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 import express from 'express';
 import routes from './routes/index.js';
+import config from './configuration.js';
 
 // Initialize express application
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || config.server_port;
 
 // Set default options
 app.set('view engine', 'ejs');
@@ -23,7 +24,7 @@ app.use("/api", routes.api);
 (async function() {
   try {
     app.listen(PORT, () => {
-      console.log(`Listening on: http//localhost:${PORT}`);
+      console.log(`Listening on: http://localhost:${PORT}`);
     });
   } catch (e) {
     console.error(e);
