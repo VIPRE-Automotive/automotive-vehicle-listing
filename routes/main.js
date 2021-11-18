@@ -30,7 +30,7 @@ const generateVehicle = () => {
     Odometer: Math.floor(Math.random() * 100000),
     Images: []
   };
-  vehicle.Link = "/vehicles/" + `${vehicle.StockNum}-${vehicle.ModelYear}-${vehicle.Model.trim()}`.toUpperCase().replace(/\s/g, "-");
+  vehicle.Link = "/vehicles/" + `${vehicle.StockNum}-${vehicle.ModelYear}-${vehicle.Model.trim()}`.toLowerCase().replace(/\s/g, "-");
 
   return vehicle;
 };
