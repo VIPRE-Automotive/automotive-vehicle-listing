@@ -62,9 +62,10 @@ router.get('/', async (request, response) => {
 router.get('/qr/:stockNum', async (request, response) => {
   try {
     // Generate QR Image
-    const d = await qr.toDataURL("https://xyz.com");
+    const d = await qr.toString("https://xyz.com");
 
     // Send Data
+    response.set('Content-Type', 'image/png');
     response.send(d);
   } catch (e) {
     response.status(500).send("");

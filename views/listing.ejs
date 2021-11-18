@@ -113,6 +113,23 @@
             <%- include("partials/listTable", {data: vehicle}) %>
 
             <p>Phasellus porttitor enim id metus volutpat ultricies. Ut nisi nunc, blandit sed dapibus at, vestibulum in felis. Etiam iaculis lorem ac nibh bibendum rhoncus.</p>
+
+            <!-- Share Card -->
+            <div class="card is-static">
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-48x48">
+                      <img src="/api/qr/<%= vehicle.StockNum %>" alt="Share QR Code" />
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <p class="title is-4">Share with a friend</p>
+                    <p class="subtitle is-6">https://example.com/vehicles/2</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
