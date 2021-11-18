@@ -126,7 +126,7 @@
             <% const limit = vehicles.length > config.options.search_pagination ? config.options.search_pagination : vehicles.length; %>
             <% for (let i = 0; i < limit; i++) { %>
               <div class="column is-4">
-                <%- include('partials/item', {
+                <%- include('partials/searchItem', {
                   context: {
                     page: "index",
                   },
