@@ -1,0 +1,25 @@
+<a class="card is-shadowless m-0" href="<%= data.Link %>" target="_blank">
+  <div class="card-content p-3">
+    <div class="media">
+      <div class="media-content">
+        <p class="title is-5"><%= data.ModelYear %> <%= data.Make %> <%= data.Model %></p>
+        <div class="subtitle tags">
+          <% if (typeof(data.Price) === "number") { %>
+            <span class="tag">
+              <%= data.Price.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0
+              }) %>
+            </span>
+          <% } %>
+          <% if (typeof(data.Odometer) === "number") { %>
+            <span class="tag">
+              <%= (Math.round(Number(data.Odometer) / 100) * 100).toLocaleString() %>mi
+            </span>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</a>

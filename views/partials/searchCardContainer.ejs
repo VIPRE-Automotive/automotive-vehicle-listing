@@ -1,0 +1,11 @@
+<% for (let i = 0; i < vehicles.length; i++) { %>
+  <div class="dropdown-item p-0">
+    <%- include("searchCard", {
+      data: vehicles[i]
+    }) %>
+  </div>
+
+  <% if (i+1 != vehicles.length) { %>
+    <hr class="dropdown-divider">
+  <% } %>
+<% } %>

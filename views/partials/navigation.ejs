@@ -36,14 +36,21 @@
     <!-- Vehicle Search -->
     <div class="navbar-end">
       <div class="navbar-item">
-        <div class="field has-addons">
-          <div class="control">
-            <input class="input" type="text" placeholder="Search for a make, model, or more">
+        <div class="dropdown" id="navigation-search-dropdown">
+          <div class="dropdown-trigger">
+            <div class="field has-addons" aria-haspopup="true" aria-controls="dropdown-menu2">
+              <div class="control">
+                <input class="input" id="navigation-search-input" type="text" placeholder="Search for a Make, Model, Etc">
+              </div>
+              <div class="control">
+                <a class="button is-info" id="navigation-search-button">
+                  Search
+                </a>
+              </div>
+            </div>
           </div>
-          <div class="control">
-            <a class="button is-info">
-              Search
-            </a>
+          <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+            <div class="dropdown-content" id="navigation-search-results"></div>
           </div>
         </div>
       </div>
