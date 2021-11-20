@@ -96,8 +96,8 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-left">
-                  <figure class="image is-48x48">
-                    <img src="/api/qr/<%= vehicle.StockNum %>" alt="Share QR Code" />
+                  <figure class="image" style="width: 89px">
+                    <img alt="Scan QR Code" id="qr-code" />
                   </figure>
                 </div>
                 <div class="media-content">
@@ -163,6 +163,19 @@
     <%- include('partials/footer', config) %>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="/js/navigation.js"></script>
+    <script>
+      // Variables
+      const StockNum = <%= vehicle.StockNum %>;
+      const qr = qrcode(0, "M");
+
+      // Setup QR code
+      qr.addData("<%= vehicle.Link %>");
+      qr.make();
+
+      // Update UI
+      document.querySelector('#qr-code').src = qr.createDataURL(5, 2);
+    </script>
   </body>
 </html>

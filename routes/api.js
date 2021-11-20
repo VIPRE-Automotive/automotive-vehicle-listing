@@ -1,7 +1,6 @@
 // Imports
 import express from 'express';
 import ratelimit from 'express-rate-limit';
-import qr from 'qrcode';
 import faker from 'faker';
 import config from '../configuration.js';
 
@@ -54,24 +53,11 @@ router.get('/', async (request, response) => {
 });
 
 /**
- * Render a QR Code link for vehicle sharing
+ * Text search query for vehicles
  *
  * @author Alec M.
- * @date 2021-11-12 13:56:00
+ * @date 2021-11-20 16:18:00
  */
-router.get('/qr/:stockNum', async (request, response) => {
-  try {
-    // Generate QR Image
-    const d = await qr.toString("https://xyz.com");
-
-    // Send Data
-    response.set('Content-Type', 'image/png');
-    response.send(d);
-  } catch (e) {
-    response.status(500).send("");
-  }
-});
-
 router.get('/search/:query', async (request, response) => {
   // Generate fake response vehicles
   let vehicles = [];
