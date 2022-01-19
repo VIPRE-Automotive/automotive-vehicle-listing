@@ -6,7 +6,7 @@
     <meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0' />
     <meta property="og:title" content="<%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %>" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://example.com/vehicles/2" />
+    <meta property="og:url" content="<%= vehicle.Link %>" />
     <meta property="og:image" content="https://via.placeholder.com/1280x960" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -101,8 +101,8 @@
                   </figure>
                 </div>
                 <div class="media-content">
-                  <p class="title is-4">Share with a friend</p>
-                  <p class="subtitle is-6">https://example.com/vehicles/2</p>
+                  <p class="title is-4 mb-2">Share with a friend</p>
+                  <a class="subtitle is-6" href="<%= vehicle.Link %>"><%= vehicle.Link %></a>
                 </div>
               </div>
             </div>
