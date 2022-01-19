@@ -1,18 +1,20 @@
 {
   "name": "automotive-vehicle-listing",
   "version": "1.0.0",
-  "description": "",
+  "description": "An automotive inventory catalog listing project built with Node.js, EJS, and Bulma.",
   "main": "server.js",
   "type": "module",
+  "private": true,
   "engines": {
     "node": ">=14.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "crash": "sh -c 'lsof -i :${PORT:-3000} -t | xargs kill'"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alec M.",
   "license": "AGPL-3.0",
   "dependencies": {
     "chalk": "^4.1.0",
