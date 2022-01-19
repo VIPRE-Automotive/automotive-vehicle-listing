@@ -3,6 +3,7 @@ __pycache__/
 node_modules/
 
 # Specific Files
+configuration.js
 
 # File Types
 *.ini
