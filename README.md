@@ -41,7 +41,15 @@ export default {
 
   /* App Info */
   application: {
-    Name: "Test Application",
+    Name: "",
+    Company: "",
+    Address: {
+      Street: "",
+      City: "",
+      State: "",
+      Zip: "",
+    },
+    Phone: "",
     URL: "http://localhost:3000",
   },
 
@@ -50,7 +58,6 @@ export default {
     search_pagination: 9,
   },
 };
-
 ```
 
 # Requirements & Dependencies
