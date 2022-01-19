@@ -113,8 +113,6 @@
         <div class="column pt-0">
           <div class="content">
             <h1>First Heading</h1>
-            <p>Lorem ipsum<sup><a>[1]</a></sup> dolor sit amet, consectetur adipiscing elit. Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus, nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio, sollicitudin vel erat vel, interdum mattis neque. Sub<sub>script</sub> works as well!</p>
-            <h2>Second Heading</h2>
             <p>Curabitur accumsan turpis pharetra <strong>augue tincidunt</strong> blandit. Quisque condimentum maximus mi, sit amet commodo arcu rutrum id. Proin pretium urna vel cursus venenatis. Suspendisse potenti. Etiam mattis sem rhoncus lacus dapibus facilisis. Donec at dignissim dui. Ut et neque nisl.</p>
             <ul>
               <li>In fermentum leo eu lectus mollis, quis dictum mi aliquet.</li>
@@ -122,8 +120,8 @@
               <li>Aliquam nec felis in sapien venenatis viverra fermentum nec lectus.</li>
               <li>Ut non enim metus.</li>
             </ul>
-            <h2>Second Heading</h2>
-            <p>Nulla efficitur eleifend nisi, sit amet bibendum sapien fringilla ac. Mauris euismod metus a tellus laoreet, at elementum ex efficitur.</p>
+
+            <h1>Second Heading</h1>
             <p>Maecenas eleifend sollicitudin dui, faucibus sollicitudin augue cursus non. Ut finibus eleifend arcu ut vehicula. Mauris eu est maximus est porta condimentum in eu justo. Nulla id iaculis sapien.</p>
 
             <!-- Vehicle Properties -->
@@ -159,6 +157,25 @@
       </div>
     <% } %>
 
+    <!-- Interest Call-To-Action -->
+    <section class="hero is-link is-small is-sticky" style="bottom: 0;" id="interest-cta">
+      <div class="hero-body">
+        <div class="container">
+          <p class="title is-flex">
+            Interested?
+            <button class="delete is-medium ml-auto" id="interest-cta-hide"></button>
+          </p>
+          <p class="subtitle">
+            Find out more about this <%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %> by clicking below.
+          </p>
+          <button class="button is-link is-inverted" id='interest-modal-show'>
+            Get started
+          </button>
+        </div>
+      </div>
+    </section>
+    <%- include('partials/interestModal', {data: vehicle}) %>
+
     <!-- Footer -->
     <%- include('partials/footer', config) %>
 
@@ -167,7 +184,6 @@
     <script src="/js/navigation.js"></script>
     <script>
       // Variables
-      const StockNum = <%= vehicle.StockNum %>;
       const qr = qrcode(0, "M");
 
       // Setup QR code
@@ -176,6 +192,29 @@
 
       // Update UI
       document.querySelector('#qr-code').src = qr.createDataURL(5, 2);
+
+      // Events
+      document.querySelector("#interest-cta-hide").onclick = (e) => {
+        document.querySelector("#interest-cta").classList.remove("is-sticky");
+      };
+      document.querySelector("#interest-modal-show").onclick = (e) => {
+        document.querySelector("#interest-modal").classList.add("is-active");
+      };
+      document.querySelector("#interest-modal-cancel").onclick = (e) => {
+        document.querySelector("#interest-modal").classList.remove("is-active");
+      };
+      document.querySelector("#interest-modal-submit").onclick = async (e) => {
+        // Send the formdata to the api using fetch
+        const formData = new FormData(document.querySelector("#interest-form"));
+
+        // Use fetch to send the form data
+        const response = await fetch('/api/interest', {
+          method: 'POST',
+          body: formData,
+        });
+
+        document.querySelector("#interest-modal").classList.remove("is-active");
+      };
     </script>
   </body>
 </html>

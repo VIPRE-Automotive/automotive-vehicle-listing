@@ -19,7 +19,7 @@ const generateVehicle = () => {
     Link: "",
     Price: parseInt(faker.commerce.price(15000, 45000, 0, "")),
     MSRP: parseInt(faker.commerce.price(16000, 50000, 0, "")),
-    VIN: faker.vehicle.vin(),
+    VIN: "2C4RDGCG8KR648272",
     IntColor: [faker.vehicle.color()],
     ExtColor: [faker.vehicle.color()],
     Owners: Math.floor(Math.random() * 3) + 1,
@@ -28,7 +28,8 @@ const generateVehicle = () => {
       "Highway": 32
     },
     Odometer: Math.floor(Math.random() * 100000),
-    Images: []
+    Images: [],
+    ShowCARFAX: 1,
   };
   vehicle.Link = config.application.URL + "/vehicles/" + `${vehicle.StockNum}-${vehicle.ModelYear}-${vehicle.Model.trim()}`.toLowerCase().replace(/\s/g, "-");
 

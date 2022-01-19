@@ -43,7 +43,7 @@
     <% } %>
     <% if (typeof(data.IntColor) === "object" && data.IntColor.length > 0) { %>
       <tr>
-        <td>Exterior Color</td>
+        <td>Interior Color</td>
         <td>
           <%= data.IntColor[0] %>
           <% if (typeof(data.IntColor[1]) === "string") { %>
@@ -61,7 +61,12 @@
     <% if (typeof(data.VIN) === "string" && data.VIN.length === 17) { %>
       <tr>
         <td>Vehicle Identification Number (VIN)</td>
-        <td><%= data.VIN.substr(0, 9) %><b class="is-underlined"><%= data.VIN.substr(9, 8) %></b></td>
+        <td>
+          <%= data.VIN.substr(0, 9) %><b class="is-underlined"><%= data.VIN.substr(9, 8) %></b>
+          <% if (data.ShowCARFAX && data.ShowCARFAX === 1) { %>
+            (<a href='http://www.carfax.com/VehicleHistory/p/Report.cfx?partner=DVW_1&vin=<%= data.VIN %>' target="_blank">CARFAX</a>)
+          <% } %>
+        </td>
       </tr>
     <% } %>
     <% if (typeof(data.EPA) === "object" && typeof(data.EPA.City) === "number" && typeof(data.EPA.Highway) === "number") { %>

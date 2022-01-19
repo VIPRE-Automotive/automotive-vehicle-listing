@@ -51,3 +51,8 @@ aside.menu .menu-list li:not(.is-active) > ul {
   margin-left: 5px;
   border-radius: 3px;
 }
+
+.is-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+}

@@ -10,10 +10,8 @@ const PORT = process.env.PORT || config.server_port;
 // Set default options
 app.set('view engine', 'ejs');
 app.set('views', 'views');
-app.use(express.urlencoded({
-  extended: true
-}));
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 // Configure Endpoints
 app.use(express.static("static"));

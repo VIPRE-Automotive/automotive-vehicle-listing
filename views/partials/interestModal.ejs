@@ -1,0 +1,45 @@
+<div class="modal" id='interest-modal'>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Interest Form</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <!-- Interest Form -->
+      <form id='interest-form'>
+        <div class="field">
+          <label class="label">Name</label>
+          <div class="control">
+            <input class="input" name="fullname" type="text" placeholder="Enter your full name">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Email</label>
+          <div class="control">
+            <input class="input" name="email" type="email" placeholder="Enter your email address">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Phone</label>
+          <div class="control">
+            <input class="input" name="phone" type="tel" placeholder="Enter your phone number">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Comments</label>
+          <div class="control">
+            <textarea class="textarea" name="comments" placeholder="Enter any additional comments"></textarea>
+          </div>
+        </div>
+
+        <!-- Hidden -->
+        <input type="hidden" name="stocknum" value="<%= data.StockNum %>">
+      </form>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" id='interest-modal-submit'>Submit</button>
+      <button class="button" id='interest-modal-cancel'>Cancel</button>
+    </footer>
+  </div>
+</div>
