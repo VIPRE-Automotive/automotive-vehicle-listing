@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <!--
+    Produced 2022
+    By https://amattu.com/links/github
+    Copy Alec M.
+    License GNU Affero General Public License v3.0
+  -->
+  <head>
+    <title><%= application.Name %></title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        overflow-x: hidden;
+      }
+
+      .container {
+        margin: 0 auto;
+        padding: 0;
+        width: 98%;
+        max-width: 725px;
+        min-width: 300px;
+        background: #f2f2f2;
+      }
+
+      .header {
+        text-align: center;
+        padding: 22px 0;
+        border-top: 4px solid #262626;
+        background: transparent;
+      }
+
+      .header .company {
+        margin: 0 auto;
+        font-size: 25px;
+        color: #3b3b3b;
+      }
+
+      .middle {
+        padding: 15px 25px;
+        background: #fff;
+      }
+
+      .middle .content {
+        text-align: left;
+        font-size: 17px;
+        color: #262626;
+      }
+
+      .middle .notice {
+        text-align: center;
+        font-size: 14px;
+        color: #3b3b3b;
+        font-variant: all-petite-caps;
+      }
+
+      .footer .content {
+        text-align: center;
+        padding: 45px 0;
+      }
+
+      .footer .content .footer-1 {
+        text-transform: uppercase;
+        font-weight: bold;
+        margin-top: 0;
+        font-size: 15px;
+      }
+
+      .footer .content .footer-2 {
+        font-size: 40px;
+        font-weight: 300;
+        margin: 0;
+        margin-top: 35px;
+      }
+
+      .disclosure {
+        padding: 15px 25px;
+        background: #3b3b3b;
+        color: #fff;
+      }
+
+      .container table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .container thead {
+        background: #3b3b3b;
+        color: #fff;
+      }
+
+      .container tbody {
+        font-size: 14px;
+      }
+
+      .container tbody tr:nth-child(2n) {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      .container tr td {
+        padding: 6px;
+      }
+    </style>
+  </head>
+
+  <body style="margin: 0; padding: 0; font-family: sans-serif; overflow-x: hidden;">
+    <div class='container' style="margin: 0 auto; padding: 0; width: 98%; max-width: 725px; min-width: 300px; background: #f2f2f2;">
+      <div class='header' style="text-align: center; padding: 22px 0; border-top: 4px solid #262626; background: transparent;">
+        <div class='company' style="margin: 0 auto; font-size: 25px; color: #3b3b3b;"><%= application.Company %></div>
+      </div>
+      <div class='middle' style="padding: 15px 25px; background: #fff;">
+        <p class='content' style="text-align: left; font-size: 17px; color: #262626;">
+          Hello,
+
+          A copy of your interest form is included below.
+          <br>
+
+          <table>
+            <tbody>
+              <% if (typeof(request.name) === "string" && request.name.length > 0) { %>
+                <tr>
+                  <td>Name</td>
+                  <td><%= request.name %></td>
+                </tr>
+              <% } %>
+              <% if (typeof(request.phone) === "string" && request.phone.length > 0) { %>
+                <tr>
+                  <td>Phone</td>
+                  <td><%= request.phone %></td>
+                </tr>
+              <% } %>
+              <% if (typeof(request.comments) === "string" && request.comments.length > 0) { %>
+                <tr>
+                  <td>Comments</td>
+                  <td><%= request.comments %></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+
+          <hr>
+
+          <table>
+            <tbody>
+              <% if (typeof(vehicle.ModelYear) === "number") { %>
+                <tr>
+                  <td>Model Year</td>
+                  <td><%= vehicle.ModelYear %></td>
+                </tr>
+              <% } %>
+              <% if (typeof(vehicle.Make) === "string" && vehicle.Make.length > 0) { %>
+                <tr>
+                  <td>Make</td>
+                  <td><%= vehicle.Make %></td>
+                </tr>
+              <% } %>
+              <% if (typeof(vehicle.Model) === "string" && vehicle.Model.length > 0) { %>
+                <tr>
+                  <td>Model</td>
+                  <td><%= vehicle.Model %></td>
+                </tr>
+              <% } %>
+              <% if (typeof(vehicle.Odometer) === "number" && vehicle.Odometer > 0) { %>
+                <tr>
+                  <td>Odometer</td>
+                  <td><%= (Math.round(Number(vehicle.Odometer) / 100) * 100).toLocaleString()  %>mi</td>
+                </tr>
+              <% } %>
+              <% if (typeof(vehicle.StockNum) === "number" && vehicle.StockNum > 0) { %>
+                <tr>
+                  <td>Stock #</td>
+                  <td><%= vehicle.StockNum %></td>
+                </tr>
+              <% } %>
+              <% if (typeof(vehicle.VIN) === "string" && vehicle.VIN.length === 17) { %>
+                <tr>
+                  <td>Vehicle Identification Number (VIN)</td>
+                  <td>
+                    <%= vehicle.VIN.substr(0, 9) %><b class="is-underlined"><%= vehicle.VIN.substr(9, 8) %></b>
+                    <% if (vehicle.ShowCARFAX && vehicle.ShowCARFAX === 1) { %>
+                      (<a href='http://www.carfax.com/VehicleHistory/p/Report.cfx?partner=DVW_1&vin=<%= vehicle.VIN %>' target="_blank">CARFAX</a>)
+                    <% } %>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+
+          <br><br>
+          <%= application.Company %>
+          <br>
+          <%= application.Phone %>
+        </p>
+        <div class='notice' style="text-align: center; font-size: 14px; color: #3b3b3b; font-variant: all-petite-caps;">An internal request has prompted this email</div>
+      </div>
+      <div class='footer'>
+        <div class='content' style="text-align: center; padding: 45px 0;">
+          <!-- No content -->
+        </div>
+      </div>
+      <div class='disclosure' style="padding: 15px 25px; background: #3b3b3b; color: #fff;">
+        <div class='disclosure-line1'>
+          This email was sent on behalf of <%= application.Company %>.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -209,10 +209,15 @@
 
         // Use fetch to send the form data
         const response = await fetch('/api/interest', {
+          headers: {
+            //'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
           method: 'POST',
           body: formData,
         });
 
+        // Update UI
         document.querySelector("#interest-modal").classList.remove("is-active");
       };
     </script>

@@ -51,6 +51,7 @@ export default {
     },
     Phone: "",
     URL: "http://localhost:3000",
+    Email: "example@example.com",
   },
 
   /* Search Options */

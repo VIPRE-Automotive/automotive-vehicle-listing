@@ -1,8 +1,32 @@
+/*
+ * Produced: Wed Jan 19 2022
+ * Author: Alec M.
+ * GitHub: https://amattu.com/links/github
+ * Copyright: (C) 2022 Alec M.
+ * License: License GNU Affero General Public License v3.0
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 // Imports
 import express from 'express';
+import ejs from 'ejs';
 import ratelimit from 'express-rate-limit';
 import faker from 'faker';
+import nodemailer from 'nodemailer';
 import config from '../configuration.js';
+import path from 'path';
 
 // Instantiate router component
 const router = express.Router();
@@ -21,8 +45,8 @@ const generateVehicle = () => {
     Price: parseInt(faker.commerce.price(15000, 45000, 0, "")),
     MSRP: parseInt(faker.commerce.price(16000, 50000, 0, "")),
     VIN: faker.vehicle.vin(),
-    IntColor: [faker.vehicle.color()],
-    ExtColor: [faker.vehicle.color()],
+    IntColor: [faker.vehicle.color(), "#3b3b3b"],
+    ExtColor: [faker.vehicle.color(), "#454545"],
     Owners: Math.floor(Math.random() * 3) + 1,
     EPA: {
       "City": 26,
@@ -53,12 +77,64 @@ router.get('/', async (request, response) => {
 });
 
 /**
+ * Submit a interest form in a vehicle
+ *
+ * @author Alec M.
+ * @date 2022-01-19
+ */
+router.post('/interest', async (request, response) => {
+  // Check if the vehicle exists
+  if (!request.body.StockNum) {
+    response.status(404).send("Invalid stock number");
+    return;
+  }
+
+  // Check if the email is valid
+  if (!request.body.email) {
+    response.status(400).send("Invalid email provided");
+    return;
+  }
+
+  // Check if name is valid
+  if (!request.body.name) {
+    response.status(400).send("Invalid name provided");
+    return;
+  }
+
+  // Generate fake response vehicles
+  const vehicle = generateVehicle();
+  const template = await ejs.renderFile(path.resolve() + "/views/email.ejs", {
+    application: config.application,
+    vehicle: vehicle,
+    request: request.body,
+  });
+  const transporter = nodemailer.createTransport({
+    host: config.email.Host,
+    port: config.email.Port,
+    auth: {
+      user: config.email.Username,
+      pass: config.email.Password
+    }
+  });
+  const status = await transporter.sendMail({
+    from: config.email.Username,
+    to: request.body.email,
+    bcc: config.application.Email,
+    subject: `Vehicle Interest - ${vehicle.ModelYear} ${vehicle.Make} ${vehicle.Model}`,
+    html: template,
+    text: "Your email provider does not support HTML content."
+  }, null);
+
+  response.status(200).send("Success");
+});
+
+/**
  * Text search query for vehicles
  *
  * @author Alec M.
  * @date 2021-11-20 16:18:00
  */
-router.get('/search/:query', async (request, response) => {
+ router.get('/search/:query', async (request, response) => {
   // Generate fake response vehicles
   let vehicles = [];
   for (let i = 0; i < 5; i++) {
