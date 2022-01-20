@@ -83,7 +83,7 @@ router.get('/', async (request, response) => {
  */
 router.post('/interest', async (request, response) => {
   // Check if the vehicle exists
-  if (!request.body.StockNum) {
+  if (!request.body.stocknum) {
     response.status(404).send("Invalid stock number");
     return;
   }
@@ -95,7 +95,7 @@ router.post('/interest', async (request, response) => {
   }
 
   // Check if name is valid
-  if (!request.body.name) {
+  if (!request.body.fullname) {
     response.status(400).send("Invalid name provided");
     return;
   }

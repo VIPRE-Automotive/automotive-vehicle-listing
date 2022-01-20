@@ -119,10 +119,10 @@
 
           <table>
             <tbody>
-              <% if (typeof(request.name) === "string" && request.name.length > 0) { %>
+              <% if (typeof(request.fullname) === "string" && request.fullname.length > 0) { %>
                 <tr>
                   <td>Name</td>
-                  <td><%= request.name %></td>
+                  <td><%= request.fullname %></td>
                 </tr>
               <% } %>
               <% if (typeof(request.phone) === "string" && request.phone.length > 0) { %>

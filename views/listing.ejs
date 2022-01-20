@@ -205,17 +205,22 @@
         document.querySelector("#interest-modal").classList.remove("is-active");
       };
       document.querySelector("#interest-modal-submit").onclick = async (e) => {
-        // Send the formdata to the api using fetch
+        // Variables
         const formData = new FormData(document.querySelector("#interest-form"));
+        const form = {};
 
-        // Use fetch to send the form data
-        const response = await fetch('/api/interest', {
+        // Turn FormData into K:V pairs
+        for (const [key, value] of formData.entries()) {
+          form[key] = value;
+        }
+
+        // Submit form
+        const response = fetch('/api/interest', {
           headers: {
-            //'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
           method: 'POST',
-          body: formData,
+          body: JSON.stringify(form),
         });
 
         // Update UI
