@@ -196,6 +196,7 @@
       // Events
       document.querySelector("#interest-cta-hide").onclick = (e) => {
         document.querySelector("#interest-cta").classList.remove("is-sticky");
+        e.target.classList.add("is-hidden");
       };
       document.querySelector("#interest-modal-show").onclick = (e) => {
         document.querySelector("#interest-modal").classList.add("is-active");
