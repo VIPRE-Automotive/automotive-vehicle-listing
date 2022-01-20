@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js -L"
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "Alec M.",
@@ -24,7 +24,7 @@
     "faker": "^5.5.3",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.7.2",
-    "nodemon": "^2.0.7",
+    "nodemon": "^2.0.15",
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0"
   }
