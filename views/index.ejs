@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <title>Search Results - <%= config.application.Name %></title>
+    <title>Search Results - <%= env.COMPANY_NAME %></title>
     <meta charset="utf-8" />
     <meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0' />
     <meta property="og:title" content="Search Results" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="<%= config.application.URL %>" />
+    <meta property="og:url" content="<%= env.APPLICATION_URL %>" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
   </head>
   <body>
     <!-- Navigation -->
-    <%- include('partials/navigation', config) %>
+    <%- include('partials/navigation', {env: env}) %>
 
     <div class="columns p-0 m-0">
       <!-- Sidebar -->
@@ -27,7 +27,7 @@
         <section class="hero is-info is-hidden-mobile">
           <div class="hero-body">
             <p class="title">
-              <%= config.application.Name %>
+              <%= env.COMPANY_NAME %>
             </p>
             <p class="subtitle">
               Current Vehicle Inventory
@@ -123,7 +123,7 @@
         <!-- Search Results -->
         <% if (typeof(vehicles) === "object" && vehicles instanceof Array && vehicles.length > 0) { %>
           <div class="columns is-multiline">
-            <% const limit = vehicles.length > config.options.search_pagination ? config.options.search_pagination : vehicles.length; %>
+            <% const limit = vehicles.length > env.SEARCH_PAGINATION ? env.SEARCH_PAGINATION : vehicles.length; %>
             <% for (let i = 0; i < limit; i++) { %>
               <div class="column is-4">
                 <%- include('partials/searchItem', {
@@ -140,7 +140,7 @@
         <% } %>
 
         <!-- Search Pagination -->
-        <% if (typeof(vehicles) === "object" && vehicles instanceof Array && vehicles.length > config.options.search_pagination) { %>
+        <% if (typeof(vehicles) === "object" && vehicles instanceof Array && vehicles.length > env.SEARCH_PAGINATION) { %>
           <nav class="pagination" role="navigation" aria-label="pagination">
             <a class="pagination-previous is-disabled" title="This is the first page">Previous</a>
             <a class="pagination-next">Next page</a>
@@ -149,7 +149,7 @@
                 <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
               </li>
 
-              <% const paginationCount = Math.ceil(vehicles.length / config.options.search_pagination); %>
+              <% const paginationCount = Math.ceil(vehicles.length / env.SEARCH_PAGINATION); %>
               <% for (let i = 1; i < paginationCount; i++) { %>
                 <li>
                   <a class="pagination-link" aria-label="Goto page <%= i+1 %>"><%= i+1 %></a>
@@ -162,7 +162,7 @@
     </div>
 
     <!-- Footer -->
-    <%- include('partials/footer', config) %>
+    <%- include('partials/footer', {env: env}) %>
 
     <!-- Scripts -->
     <script src="/js/index.js"></script>

@@ -7,7 +7,7 @@
     License GNU Affero General Public License v3.0
   -->
   <head>
-    <title><%= application.Name %></title>
+    <title><%= env.APPLICATION_NAME %></title>
     <style>
       html, body {
         margin: 0;
@@ -108,7 +108,7 @@
   <body style="margin: 0; padding: 0; font-family: sans-serif; overflow-x: hidden;">
     <div class='container' style="margin: 0 auto; padding: 0; width: 98%; max-width: 725px; min-width: 300px; background: #f2f2f2;">
       <div class='header' style="text-align: center; padding: 22px 0; border-top: 4px solid #262626; background: transparent;">
-        <div class='company' style="margin: 0 auto; font-size: 25px; color: #3b3b3b;"><%= application.Company %></div>
+        <div class='company' style="margin: 0 auto; font-size: 25px; color: #3b3b3b;"><%= env.COMPANY_NAME %></div>
       </div>
       <div class='middle' style="padding: 15px 25px; background: #fff;">
         <p class='content' style="text-align: left; font-size: 17px; color: #262626;">
@@ -189,9 +189,9 @@
           </table>
 
           <br><br>
-          <%= application.Company %>
+          <%= env.COMPANY_NAME %>
           <br>
-          <%= application.Phone %>
+          <%= env.COMPANY_PHONE %>
         </p>
         <div class='notice' style="text-align: center; font-size: 14px; color: #3b3b3b; font-variant: all-petite-caps;">An internal request has prompted this email</div>
       </div>
@@ -202,7 +202,7 @@
       </div>
       <div class='disclosure' style="padding: 15px 25px; background: #3b3b3b; color: #fff;">
         <div class='disclosure-line1'>
-          This email was sent on behalf of <%= application.Company %>.
+          This email was sent on behalf of <%= env.COMPANY_NAME %>.
         </div>
       </div>
     </div>

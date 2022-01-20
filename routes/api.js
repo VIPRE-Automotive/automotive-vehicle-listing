@@ -25,7 +25,6 @@ import ejs from 'ejs';
 import ratelimit from 'express-rate-limit';
 import faker from 'faker';
 import nodemailer from 'nodemailer';
-import config from '../configuration.js';
 import path from 'path';
 
 // Instantiate router component
@@ -55,7 +54,7 @@ const generateVehicle = () => {
     Odometer: Math.floor(Math.random() * 100000),
     Images: [],
   };
-  vehicle.Link = "/vehicles/" + `${vehicle.StockNum}-${vehicle.ModelYear}-${vehicle.Model.trim()}`.toLowerCase().replace(/\s/g, "-");
+  vehicle.Link = process.env.APPLICATION_URL + "/vehicles/" + `${vehicle.StockNum}-${vehicle.ModelYear}-${vehicle.Model.trim()}`.toLowerCase().replace(/\s/g, "-");
 
   return vehicle;
 };
@@ -104,27 +103,28 @@ router.post('/interest', async (request, response) => {
   // Generate fake response vehicles
   const vehicle = generateVehicle();
   const template = await ejs.renderFile(path.resolve() + "/views/email.ejs", {
-    application: config.application,
+    env: process.env,
     vehicle: vehicle,
     request: request.body,
   });
   const transporter = nodemailer.createTransport({
-    host: config.email.Host,
-    port: config.email.Port,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
     auth: {
-      user: config.email.Username,
-      pass: config.email.Password
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
     }
   });
   const status = await transporter.sendMail({
-    from: config.email.Username,
+    from: process.env.EMAIL_USERNAME,
     to: request.body.email,
-    bcc: config.application.Email,
+    bcc: process.env.COMPANY_EMAIL,
     subject: `Vehicle Interest - ${vehicle.ModelYear} ${vehicle.Make} ${vehicle.Model}`,
     html: template,
     text: "Your email provider does not support HTML content."
   }, null);
 
+  // Default
   response.status(200).send("Success");
 });
 
@@ -143,7 +143,7 @@ router.post('/interest', async (request, response) => {
 
   // Render respons
   response.render('partials/searchCardContainer', {
-    config,
+    env: process.env,
     vehicles
   });
 });

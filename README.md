@@ -23,42 +23,31 @@ npm start
 
 Visit `http://localhost:3000` in your browser
 
-## /configuration.js
+## .env
 This file houses all of the important configuration details, and is in the root folder. See the example below.
 
-```JavaScript
-export default {
-  /* Server */
-  server_port: 3000,
+```ini
+# Basic Application Configuration
+APPLICATION_NAME="Inventory"
+APPLICATION_URL="http://localhost:3000"
+SERVER_PORT=3000
+SEARCH_PAGINATION=9
 
-  /* Email Details */
-  email: {
-    Host: "",
-    Port: 25,
-    Username: "",
-    Password: "",
-  },
+# Email Configuration
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=587
+EMAIL_USERNAME=""
+EMAIL_PASSWORD=""
 
-  /* App Info */
-  application: {
-    Name: "",
-    Company: "",
-    Address: {
-      Street: "",
-      City: "",
-      State: "",
-      Zip: "",
-    },
-    Phone: "",
-    URL: "http://localhost:3000",
-    Email: "example@example.com",
-  },
-
-  /* Search Options */
-  options: {
-    search_pagination: 9,
-  },
-};
+# Company Configuration
+COMPANY_NAME="Auto Company"
+COMPANY_ADDRESS_STREET=""
+COMPANY_ADDRESS_CITY=""
+COMPANY_ADDRESS_STATE=""
+COMPANY_ADDRESS_ZIP=""
+COMPANY_ADDRESS_COUNTRY=""
+COMPANY_PHONE=""
+COMPANY_EMAIL=""
 ```
 
 # Requirements & Dependencies

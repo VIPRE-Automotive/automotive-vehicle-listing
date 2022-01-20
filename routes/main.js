@@ -22,7 +22,6 @@
 // Imports
 import express from 'express';
 import faker from 'faker';
-import config from '../configuration.js';
 
 // Instantiate router component
 const router = express.Router();
@@ -52,7 +51,7 @@ const generateVehicle = () => {
     Images: [],
     ShowCARFAX: 1,
   };
-  vehicle.Link = config.application.URL + "/vehicles/" + `${vehicle.StockNum}-${vehicle.ModelYear}-${vehicle.Model.trim()}`.toLowerCase().replace(/\s/g, "-");
+  vehicle.Link = process.env.APPLICATION_URL + "/vehicles/" + `${vehicle.StockNum}-${vehicle.ModelYear}-${vehicle.Model.trim()}`.toLowerCase().replace(/\s/g, "-");
 
   return vehicle;
 };
@@ -71,7 +70,7 @@ router.get('/', async (request, response) => {
 
   // Send default response
   response.render('index', {
-    config,
+    env: process.env,
     context: {
       query: "All Vehicles"
     },
@@ -88,7 +87,7 @@ router.get('/vehicles/:vehicle', async (request, response) => {
 
   // Send default response
   response.render('listing', {
-    config,
+    env: process.env,
     context: {
       query: "",
       queryLink: "/",

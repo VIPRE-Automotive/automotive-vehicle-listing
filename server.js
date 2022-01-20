@@ -22,11 +22,12 @@
 // Imports
 import express from 'express';
 import routes from './routes/index.js';
-import config from './configuration.js';
+import dotenv from 'dotenv';
 
 // Initialize express application
+dotenv.config();
 const app = express();
-const PORT = process.env.PORT || config.server_port;
+const PORT = process.env.SERVER_PORT || 3000;
 
 // Set default options
 app.set('view engine', 'ejs');
@@ -40,7 +41,7 @@ app.use("/", routes.main);
 app.use("/api", routes.api);
 
 // HTTP server function
-(async function() {
+(async () => {
   try {
     app.listen(PORT, () => {
       console.log(`Listening on: http://localhost:${PORT}`);
