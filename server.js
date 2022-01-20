@@ -27,7 +27,7 @@ import dotenv from 'dotenv';
 // Initialize express application
 dotenv.config();
 const app = express();
-const PORT = process.env.SERVER_PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 // Set default options
 app.set('view engine', 'ejs');

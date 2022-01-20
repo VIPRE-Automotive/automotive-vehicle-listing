@@ -30,7 +30,7 @@ This file houses all of the important configuration details, and is in the root 
 # Basic Application Configuration
 APPLICATION_NAME="Inventory"
 APPLICATION_URL="http://localhost:3000"
-SERVER_PORT=3000
+PORT=3000
 SEARCH_PAGINATION=9
 
 # Email Configuration
