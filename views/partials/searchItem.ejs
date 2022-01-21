@@ -27,7 +27,7 @@
             <span class="tag is-success">1 OWNER</span>
           <% } else if (typeof(vehicle.Odometer) === "number" && vehicle.Odometer <= 20000) { %>
             &middot;
-            <span class="tag is-info">LOW MILES</span>
+            <span class="tag is-link">LOW MILES</span>
           <% } else if (typeof(vehicle.EPA) === "object" && typeof(vehicle.EPA.City) === "number" && typeof(vehicle.EPA.Highway) === "number" && (vehicle.EPA.City >= 35 || vehicle.EPA.Highway >= 35)) { %>
             &middot;
             <span class="tag is-primary">Fuel Efficient</span>
