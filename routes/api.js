@@ -76,14 +76,14 @@ router.post('/interest', async (request, response) => {
 
   // Check if the email is valid
   const Email = request.body.email || "";
-  if (!Email || Email.indexof("@") === -1) {
+  if (!Email || Email.indexOf("@") === -1) {
     response.status(400).send("Invalid email provided");
     return;
   }
 
   // Check if name is valid
   const FullName = request.body.fullname || "";
-  if (!FullName || FullName.indexof(" ") === -1) {
+  if (!FullName || FullName.indexOf(" ") === -1) {
     response.status(400).send("Invalid name provided");
     return;
   }
