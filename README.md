@@ -1,5 +1,17 @@
 # Introduction
-This is a comprehensive Automotive Vehicle Catalog/Listing application. The front-end relies strictly on Bulma styling, with a Node.js/Express backend. It is designed to be lightly focused on automotive vehicle listing, and could be easily reconfigured to focus on a different type of product or service.
+This is a comprehensive Automotive Vehicle Catalog/Listing application. The front-end relies strictly on Bulma styling, with a Node.js/Express backend. It is designed to be lightly focused on automotive vehicle listing, and could be easily reconfigured to focus on a different type of product.
+
+# Core Features
+- Inventory listing
+- Vehicle Search filter design
+- Live vehicle search box
+- Inventory item page
+  - Related item recommendations
+  - Preview images
+  - "Share with a friend" QR code
+  - Key feature highlighting
+- Call-To-Action email form
+- ... Etc
 
 # Setup
 ## Basics
@@ -106,3 +118,10 @@ N/A
 - Font-Awesome 5.15.4
 - Node.js, Express, & EJS
 - Etc
+
+# To-Do
+- Fix live vehicle search box
+- Fix "related item" recommendations
+- Implement search filters
+- Implement inventory listing "Share" card button
+- Implement inventory listing filter (Sold/Available), display type (card/list), sort by (Price, age, etc)
