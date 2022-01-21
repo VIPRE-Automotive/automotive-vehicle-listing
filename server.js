@@ -38,7 +38,7 @@ app.use(express.urlencoded({extended: true}));
 // Configure Endpoints
 app.use(express.static("static"));
 app.use("/", routes.main);
-app.use("/api", routes.api);
+app.use("/api/v1", routes.api);
 
 // HTTP server function
 (async () => {

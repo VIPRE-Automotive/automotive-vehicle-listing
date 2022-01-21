@@ -86,7 +86,7 @@ async function navigationSearch() {
     isNavigationSearching = true;
   }
 
-  const response = await fetch("/api/search/" + searchInput.value);
+  const response = await fetch("/api/v1/search/" + searchInput.value);
   if (!response || response.status !== 200) {
     isNavigationSearching = false;
     return false;
