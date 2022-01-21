@@ -10,7 +10,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "setup": "nodejs ./setup.js"
   },
   "keywords": [],
   "author": "Alec M.",
@@ -21,7 +22,6 @@
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-rate-limit": "^5.5.1",
-    "faker": "^5.5.3",
     "firebase": "^9.6.4",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.7.2",

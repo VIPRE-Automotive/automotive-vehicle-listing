@@ -3,25 +3,33 @@ This is a comprehensive Automotive Vehicle Catalog/Listing application. The fron
 
 # Setup
 ## Basics
-Get to the root folder
+1. Get to the root folder
 
 ```
 cd /automotive-vehicle-listing
 ```
 
-Install packages
+2. Install packages
 
 ```
 npm install
 ```
 
-Run server
+3. Create the .env file from the below template
 
+
+4. Run Setup
+```
+npm run setup
+```
+(This will create the demo vehicles in your Firebase database)
+
+5. Run server
 ```
 npm start
 ```
 
-Visit `http://localhost:3000` in your browser
+6. Visit `http://localhost:3000` in your browser
 
 ## .env
 This file houses all of the important configuration details, and is in the root folder. See the example below.
