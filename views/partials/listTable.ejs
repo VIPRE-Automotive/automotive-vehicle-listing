@@ -63,7 +63,7 @@
         <td>Vehicle Identification Number (VIN)</td>
         <td>
           <%= data.VIN.substr(0, 9) %><b class="is-underlined"><%= data.VIN.substr(9, 8) %></b>
-          <% if (data.ShowCARFAX && data.ShowCARFAX === 1) { %>
+          <% if (data.ShowCARFAX && data.ShowCARFAX == true) { %>
             (<a href='http://www.carfax.com/VehicleHistory/p/Report.cfx?partner=DVW_1&vin=<%= data.VIN %>' target="_blank">CARFAX</a>)
           <% } %>
         </td>
