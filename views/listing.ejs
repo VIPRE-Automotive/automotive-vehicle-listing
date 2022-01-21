@@ -206,6 +206,9 @@
       document.querySelector("#interest-modal-cancel").onclick = (e) => {
         document.querySelector("#interest-modal").classList.remove("is-active");
       };
+      document.querySelector("#interest-modal-close").onclick = (e) => {
+        document.querySelector("#interest-modal").classList.remove("is-active");
+      };
       document.querySelector("#interest-modal-submit").onclick = async (e) => {
         // Variables
         const formData = new FormData(document.querySelector("#interest-form"));
