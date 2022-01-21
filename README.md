@@ -48,9 +48,51 @@ COMPANY_ADDRESS_ZIP=""
 COMPANY_ADDRESS_COUNTRY=""
 COMPANY_PHONE=""
 COMPANY_EMAIL=""
+
+# Firebase Configuration
+FIREBASE_API_KEY=""
+FIREBASE_AUTH_DOMAIN=""
+FIREBASE_PROJECT_ID=""
+FIREBASE_STORAGE_BUCKET=""
+FIREBASE_MESSAGING_SENDER_ID=""
+FIREBASE_APP_ID=""
+FIREBASE_MEASUREMENT_ID=""
+
+# Firebase Routes
+FIREBASE_RTD_ACTIVE_INVENTORY="/inventory"
+FIREBASE_RTD_INACTIVE_INVENTORY="/inactive-inventory"
+FIREBASE_STO_ACTIVE_INVENTORY="/inventory"
 ```
 
+## Firebase
+This application relies on Google Firebase realtime database and storage for basic inventory management. The default structure of the database is below. You can import it directly to Google Firebase.
+
+### Database Engine
+Access rules:
+```JSON
+{
+  "rules": {
+    "inventory": {
+      ".read": true,
+      ".write": false
+    }
+  }
+}
+```
+
+Database structure
+```JSON
+{
+  "inventory": [],
+  "inactive-inventory": []
+}
+```
+
+### Storage Engine
+N/A
+
 # Requirements & Dependencies
+- Google Firebase (Realtime DB and Storage)
 - Bulma 0.93
 - Font-Awesome 5.15.4
 - Node.js, Express, & EJS

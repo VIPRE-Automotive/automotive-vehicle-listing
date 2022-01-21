@@ -21,21 +21,19 @@
 
 // Imports
 import express from 'express';
-import routes from './routes/index.js';
 import dotenv from 'dotenv';
+import routes from './routes/index.js';
 
 // Initialize express application
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Set default options
+// Set server options
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-
-// Configure Endpoints
 app.use(express.static("static"));
 app.use("/", routes.main);
 app.use("/api/v1", routes.api);

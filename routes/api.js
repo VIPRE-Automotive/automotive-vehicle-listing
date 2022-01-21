@@ -26,6 +26,7 @@ import ratelimit from 'express-rate-limit';
 import faker from 'faker';
 import nodemailer from 'nodemailer';
 import path from 'path';
+import db from '../database/index.js';
 
 // Instantiate router component
 const router = express.Router();
@@ -60,7 +61,7 @@ const generateVehicle = () => {
 };
 
 // Use RateLimit Module
-router.use(new ratelimit({
+router.use(ratelimit({
   windowMs: 15 * 1000,
   max: 5
 }));
@@ -73,6 +74,34 @@ router.use(new ratelimit({
 router.get('/', async (request, response) => {
   // Send default response
   response.status(404).send("");
+});
+
+/**
+ * Retrieve all inventory from database
+ *
+ * @author Alec M.
+ * @date 2022-01-21
+ */
+router.get('/inventory', async (request, response) => {
+  // Retrieve all inventory
+  const inventory = await db.getActiveInventory() || [];
+
+  // Return Result
+  response.status(200).send(inventory);
+});
+
+/**
+ * Retrieve all images for a specific inventory item
+ *
+ * @author Alec M.
+ * @date 2022-01-21
+ */
+router.get('/:stocknum/images', async (request, response) => {
+  // Retrieve images
+  const images = await db.getInventoryItemImages(parseInt(request.params.stocknum)) || [];
+
+  // Return Result
+  response.status(200).send(images);
 });
 
 /**
@@ -108,6 +137,7 @@ router.post('/interest', async (request, response) => {
     request: request.body,
   });
   const transporter = nodemailer.createTransport({
+    // @ts-ignore
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
     auth: {
