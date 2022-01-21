@@ -49,17 +49,16 @@ const db = getDatabase(firebase);
 const reference = ref(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY);
 const inventory = [];
 
-// Generate a fake vehicle
-const generateVehicle = () => {
-  let vehicle = {
+// Generate 32 vehicles
+for (let i = 0; i < 33; i++) {
+  inventory.push({
     Sold: Math.random() < 0.2,
-    StockNum: Math.floor(Math.random() * 250) + 1,
+    StockNum: i+1,
     ModelYear: Math.floor(Math.random() * (2022 - 2017) + 2016),
     Make: "Toyota",
     Model: "Camry",
     Trim: "XLE",
     Drivetrain: "FWD",
-    Link: "",
     Price: 23075,
     MSRP: 27950,
     VIN: "T7H29FE0DGK025802",
@@ -72,15 +71,7 @@ const generateVehicle = () => {
     },
     Odometer: Math.floor(Math.random() * 100000),
     Images: [],
-  };
-  vehicle.Link = process.env.APPLICATION_URL + "/vehicles/" + `${vehicle.StockNum}-${vehicle.ModelYear}-${vehicle.Model.trim()}`.toLowerCase().replace(/\s/g, "-");
-
-  return vehicle;
-};
-
-// Generate 32 vehicles
-for (let i = 0; i < 33; i++) {
-  inventory.push(generateVehicle());
+  });
 }
 
 // Setup inventory in database
