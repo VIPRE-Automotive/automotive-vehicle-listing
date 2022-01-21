@@ -46,12 +46,10 @@ const configuration = {
 // Setup Handles
 const firebase = initializeApp(configuration);
 const db = getDatabase(firebase);
-const reference = ref(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY);
-const inventory = [];
 
 // Generate 32 vehicles
 for (let i = 0; i < 33; i++) {
-  inventory.push({
+  set(ref(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY + "/" + (i+1)), {
     Sold: Math.random() < 0.2,
     StockNum: i+1,
     ModelYear: Math.floor(Math.random() * (2022 - 2017) + 2016),
@@ -63,7 +61,7 @@ for (let i = 0; i < 33; i++) {
     MSRP: 27950,
     VIN: "T7H29FE0DGK025802",
     IntColor: ["Black", "#3b3b3b"],
-    ExtColor: ["Black", "#454545"],
+    ExtColor: ["Jigglypuff", "#ff9ff3"],
     Owners: Math.floor(Math.random() * 3) + 1,
     EPA: {
       "City": 26,
@@ -71,11 +69,7 @@ for (let i = 0; i < 33; i++) {
     },
     Odometer: Math.floor(Math.random() * 100000),
     Images: [],
+  }).then(d => {
+    console.log(`Set StockNum #${i+1}`);
   });
 }
-
-// Setup inventory in database
-set(reference, inventory).then(d => {
-  console.log("Done!");
-  process.exit(0);
-});
