@@ -38,6 +38,7 @@ This file houses all of the important configuration details, and is in the root 
 # Basic Application Configuration
 APPLICATION_NAME="Inventory"
 APPLICATION_URL="http://localhost:3000"
+APPLICATION_INVENTORY_URL="http://localhost:3000/inventory"
 PORT=3000
 SEARCH_PAGINATION=9
 

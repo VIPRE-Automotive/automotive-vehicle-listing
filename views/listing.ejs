@@ -6,7 +6,7 @@
     <meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0' />
     <meta property="og:title" content="<%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %>" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="<%= vehicle.Link %>" />
+    <meta property="og:url" content="<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>" />
     <meta property="og:image" content="https://via.placeholder.com/1280x960" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -102,7 +102,9 @@
                 </div>
                 <div class="media-content">
                   <p class="title is-4 mb-2">Share with a friend</p>
-                  <a class="subtitle is-6" href="<%= vehicle.Link %>"><%= vehicle.Link %></a>
+                  <a class="subtitle is-6" href="<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>">
+                    <%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>
+                  </a>
                 </div>
               </div>
             </div>
@@ -149,7 +151,7 @@
                 context: {
                   "page": "listing",
                 },
-                data: recommendations[i],
+                vehicle: recommendations[i],
               }) %>
             </div>
           <% } %>
@@ -187,7 +189,7 @@
       const qr = qrcode(0, "M");
 
       // Setup QR code
-      qr.addData("<%= vehicle.Link %>");
+      qr.addData('<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>');
       qr.make();
 
       // Update UI

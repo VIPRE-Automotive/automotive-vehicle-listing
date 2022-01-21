@@ -121,26 +121,27 @@
         </div>
 
         <!-- Search Results -->
-        <% if (typeof(vehicles) === "object" && vehicles instanceof Array && vehicles.length > 0) { %>
+        <% if (typeof(inventory) === "object" && inventory instanceof Array && inventory.length > 0) { %>
           <div class="columns is-multiline">
-            <% const limit = vehicles.length > env.SEARCH_PAGINATION ? env.SEARCH_PAGINATION : vehicles.length; %>
+            <% const limit = inventory.length > env.SEARCH_PAGINATION ? env.SEARCH_PAGINATION : inventory.length; %>
             <% for (let i = 0; i < limit; i++) { %>
               <div class="column is-4">
                 <%- include('partials/searchItem', {
+                  env: env,
                   context: {
                     page: "index",
                   },
-                  data: vehicles[i],
+                  vehicle: inventory[i],
                 }) %>
               </div>
             <% } %>
           </div>
         <% } else { %>
-          <h2>No search results ...? </h2>
+          <h2>Oops... No search results to display</h2>
         <% } %>
 
         <!-- Search Pagination -->
-        <% if (typeof(vehicles) === "object" && vehicles instanceof Array && vehicles.length > env.SEARCH_PAGINATION) { %>
+        <% if (typeof(inventory) === "object" && inventory instanceof Array && inventory.length > env.SEARCH_PAGINATION) { %>
           <nav class="pagination" role="navigation" aria-label="pagination">
             <a class="pagination-previous is-disabled" title="This is the first page">Previous</a>
             <a class="pagination-next">Next page</a>
@@ -149,7 +150,7 @@
                 <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
               </li>
 
-              <% const paginationCount = Math.ceil(vehicles.length / env.SEARCH_PAGINATION); %>
+              <% const paginationCount = Math.ceil(inventory.length / env.SEARCH_PAGINATION); %>
               <% for (let i = 1; i < paginationCount; i++) { %>
                 <li>
                   <a class="pagination-link" aria-label="Goto page <%= i+1 %>"><%= i+1 %></a>

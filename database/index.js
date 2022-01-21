@@ -50,13 +50,19 @@ db._storage = getStorage(db._firebase);
 /**
  * Get all inventory items from the database
  *
- * @return {Promise<Array<Inventory>>}
+ * @return Promise<Array<Inventory>>
  * @author Alec M.
  */
 db.getActiveInventory = async () => {
   return new Promise((resolve, reject) => {
     onValue(dRef(db._database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), (snapshot) => {
-      resolve(snapshot.val());
+      const d = snapshot.val();
+
+      if (d && typeof(d) === "object") {
+        resolve(Object.values(d));
+      } else {
+        resolve(null);
+      }
     }, onValueOpts);
   });
 };
@@ -78,6 +84,36 @@ db.getInventoryItemImages = async (StockNum = 0) => {
 
       resolve(images);
     });
+  });
+};
+
+/**
+ * Get an active inventory item from the database by StockNum
+ *
+ * @param {number} StockNum
+ * @param {bool} withImages include vehicle image links
+ * @returns Promise<Inventory>
+ * @author Alec M.
+ */
+db.getActiveInventoryItem = async (StockNum, withImages = false) => {
+  return new Promise((resolve, reject) => {
+    onValue(dRef(db._database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY + "/" + StockNum), (snapshot) => {
+      const vehicle = snapshot.val();
+      vehicle.Images = [];
+
+      // Pull Images
+      if (withImages) {
+        listAll(sRef(db._storage, process.env.FIREBASE_STO_ACTIVE_INVENTORY + "/" + StockNum)).then((files) => {
+          files.items.forEach(file => {
+            vehicle.Images.push(file.name);
+          });
+
+          resolve(vehicle);
+        });
+      } else {
+        resolve(vehicle);
+      }
+    }, onValueOpts);
   });
 };
 

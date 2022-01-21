@@ -1,28 +1,28 @@
-<a class="card is-shadowless m-0" href="<%= data.Link %>" target="_blank">
+<a class="card is-shadowless m-0" href='<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>' target="_blank">
   <div class="card-content p-3">
     <div class="media">
       <div class="media-content">
-        <p class="title is-5"><%= data.ModelYear %> <%= data.Make %> <%= data.Model %></p>
+        <p class="title is-5"><%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %></p>
         <div class="subtitle tags">
-          <% if (typeof(data.Price) === "number") { %>
+          <% if (typeof(vehicle.Price) === "number") { %>
             <span class="tag">
-              <%= data.Price.toLocaleString('en-US', {
+              <%= vehicle.Price.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 0
               }) %>
             </span>
           <% } %>
-          <% if (typeof(data.ExtColor) === "object" && typeof(data.ExtColor[0]) === "string" && typeof(data.IntColor) === "object" && typeof(data.IntColor[0]) === "string") { %>
+          <% if (typeof(vehicle.ExtColor) === "object" && typeof(vehicle.ExtColor[0]) === "string" && typeof(vehicle.IntColor) === "object" && typeof(vehicle.IntColor[0]) === "string") { %>
             <span class="tag">
-              <%= data.ExtColor[0] %>
+              <%= vehicle.ExtColor[0] %>
               &middot;
-              <%= data.IntColor[0] %>
+              <%= vehicle.IntColor[0] %>
             </span>
           <% } %>
-          <% if (typeof(data.Odometer) === "number") { %>
+          <% if (typeof(vehicle.Odometer) === "number") { %>
             <span class="tag">
-              <%= (Math.round(Number(data.Odometer) / 100) * 100).toLocaleString() %>mi
+              <%= (Math.round(Number(vehicle.Odometer) / 100) * 100).toLocaleString() %>mi
             </span>
           <% } %>
         </div>

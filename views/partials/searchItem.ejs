@@ -1,4 +1,4 @@
-<div class="card <%= data.Sold ? 'is-out-of-stock' : '' %>">
+<div class="card <%= vehicle.Sold ? 'is-out-of-stock' : '' %>">
   <!-- Card Image -->
   <div class="card-image">
     <figure class="image is-4by3">
@@ -10,25 +10,25 @@
   <div class="card-content">
     <div class="media">
       <div class="media-content">
-        <p class="title is-4"><%= data.ModelYear %> <%= data.Make %> <%= data.Model %></p>
+        <p class="title is-4"><%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %></p>
         <p class="subtitle is-6">
           <!-- Basic Attributes -->
-          <% if (typeof(data.Odometer) === "number" && data.Odometer > 0) { %>
-            <span><%= (Math.round(Number(data.Odometer) / 100) * 100).toLocaleString()  %>mi</span>
+          <% if (typeof(vehicle.Odometer) === "number" && vehicle.Odometer > 0) { %>
+            <span><%= (Math.round(Number(vehicle.Odometer) / 100) * 100).toLocaleString()  %>mi</span>
           <% } %>
-          <% if (typeof(data.EPA) === "object" && typeof(data.EPA.City) === "number" && typeof(data.EPA.Highway) === "number") { %>
+          <% if (typeof(vehicle.EPA) === "object" && typeof(vehicle.EPA.City) === "number" && typeof(vehicle.EPA.Highway) === "number") { %>
             &middot;
-            <span>EPA <%= data.EPA.City %> / <%= data.EPA.Highway %>mpg</span>
+            <span>EPA <%= vehicle.EPA.City %> / <%= vehicle.EPA.Highway %>mpg</span>
           <% } %>
 
           <!-- Feature Tags -->
-          <% if (data.Owners && data.Owners === 1) { %>
+          <% if (vehicle.Owners && vehicle.Owners === 1) { %>
             &middot;
             <span class="tag is-success">1 OWNER</span>
-          <% } else if (typeof(data.Odometer) === "number" && data.Odometer <= 20000) { %>
+          <% } else if (typeof(vehicle.Odometer) === "number" && vehicle.Odometer <= 20000) { %>
             &middot;
             <span class="tag is-info">LOW MILES</span>
-          <% } else if (typeof(data.EPA) === "object" && typeof(data.EPA.City) === "number" && typeof(data.EPA.Highway) === "number" && (data.EPA.City >= 35 || data.EPA.Highway >= 35)) { %>
+          <% } else if (typeof(vehicle.EPA) === "object" && typeof(vehicle.EPA.City) === "number" && typeof(vehicle.EPA.Highway) === "number" && (vehicle.EPA.City >= 35 || vehicle.EPA.Highway >= 35)) { %>
             &middot;
             <span class="tag is-primary">Fuel Efficient</span>
           <% } %>
@@ -38,7 +38,7 @@
   </div>
 
   <!-- Pricing Table -->
-  <% if (context.page !== "listing" && typeof(data.MSRP) === "number" && typeof(data.Price) === "number") { %>
+  <% if (context.page !== "listing" && typeof(vehicle.MSRP) === "number" && typeof(vehicle.Price) === "number") { %>
     <div class="content">
       <div class="px-3 has-text-centered">
         <nav class="level is-mobile">
@@ -46,7 +46,7 @@
             <div>
               <p class="heading">Original MSRP</p>
               <p class="title has-text-weight-normal">
-                <%= data.MSRP.toLocaleString('en-US', {
+                <%= vehicle.MSRP.toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: 0
@@ -58,7 +58,7 @@
             <div>
               <p class="heading">Our Price</p>
               <p class="title">
-                <%= data.Price.toLocaleString('en-US', {
+                <%= vehicle.Price.toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: 0
@@ -73,7 +73,7 @@
 
   <!-- Card Footer -->
   <footer class="card-footer">
-    <a href="<%= data.Link %>" class="card-footer-item">View More Details</a>
+    <a href='<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>' class="card-footer-item">View More Details</a>
     <a href="#" class="card-footer-item">Share</a>
   </footer>
 </div>
