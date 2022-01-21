@@ -1,0 +1,32 @@
+<a class="card is-shadowless m-0" href='<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>' target="_blank">
+  <div class="card-content p-3">
+    <div class="media">
+      <div class="media-content">
+        <p class="title is-5"><%= vehicle.ModelYear %> <%= vehicle.Make %> <%= vehicle.Model %></p>
+        <div class="subtitle tags">
+          <% if (typeof(vehicle.Price) === "number") { %>
+            <span class="tag">
+              <%= vehicle.Price.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0
+              }) %>
+            </span>
+          <% } %>
+          <% if (typeof(vehicle.ExtColor) === "object" && typeof(vehicle.ExtColor[0]) === "string" && typeof(vehicle.IntColor) === "object" && typeof(vehicle.IntColor[0]) === "string") { %>
+            <span class="tag">
+              <%= vehicle.ExtColor[0] %>
+              &middot;
+              <%= vehicle.IntColor[0] %>
+            </span>
+          <% } %>
+          <% if (typeof(vehicle.Odometer) === "number") { %>
+            <span class="tag">
+              <%= (Math.round(Number(vehicle.Odometer) / 100) * 100).toLocaleString() %>mi
+            </span>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</a>

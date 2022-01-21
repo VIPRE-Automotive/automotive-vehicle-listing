@@ -43,7 +43,7 @@ router.get('/', async (request, response) => {
   const inventory = await db.getActiveInventory() || [];
 
   // Send default response
-  response.render('index', {
+  response.render('search', {
     env: process.env,
     context: {
       query: "All Vehicles"

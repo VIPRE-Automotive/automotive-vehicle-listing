@@ -18,7 +18,7 @@
     <div class="columns p-0 m-0">
       <!-- Sidebar -->
       <div class="column is-2 has-background-light">
-        <%- include('partials/sidebar', {}) %>
+        <%- include('partials/searchSidebar', {env: env}) %>
       </div>
 
       <!-- Search Results -->
@@ -126,7 +126,7 @@
             <% const limit = inventory.length > env.SEARCH_PAGINATION ? env.SEARCH_PAGINATION : inventory.length; %>
             <% for (let i = 0; i < limit; i++) { %>
               <div class="column is-4">
-                <%- include('partials/searchItem', {
+                <%- include('partials/searchCard', {
                   env: env,
                   context: {
                     page: "index",

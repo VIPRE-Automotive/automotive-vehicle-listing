@@ -134,7 +134,7 @@ router.post('/interest', async (request, response) => {
   throw new Error("Not Implemented");
 
   // Render respons
-  response.render('partials/searchCardContainer', {
+  response.render('partials/navigationSearchCardContainer', {
     env: process.env,
     vehicle: [],
   });

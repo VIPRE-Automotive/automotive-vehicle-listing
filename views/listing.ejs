@@ -127,7 +127,7 @@
             <p>Maecenas eleifend sollicitudin dui, faucibus sollicitudin augue cursus non. Ut finibus eleifend arcu ut vehicula. Mauris eu est maximus est porta condimentum in eu justo. Nulla id iaculis sapien.</p>
 
             <!-- Vehicle Properties -->
-            <%- include("partials/listTable", {data: vehicle}) %>
+            <%- include("partials/listingDataTable", {vehicle: vehicle}) %>
 
             <p>Phasellus porttitor enim id metus volutpat ultricies. Ut nisi nunc, blandit sed dapibus at, vestibulum in felis. Etiam iaculis lorem ac nibh bibendum rhoncus.</p>
           </div>
@@ -147,7 +147,7 @@
         <div class="columns p-3">
           <% for (let i = 0; i < recommendations.length; i++) { %>
             <div class="column is-4">
-              <%- include('partials/searchItem', {
+              <%- include('partials/searchCard', {
                 context: {
                   "page": "listing",
                 },

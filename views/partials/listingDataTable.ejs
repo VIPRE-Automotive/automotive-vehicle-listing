@@ -1,0 +1,79 @@
+<table class="table is-hoverable">
+  <tbody>
+    <% if (typeof(vehicle.Price) === "number") { %>
+      <tr>
+        <td>Our Price</td>
+        <td><b><%= vehicle.Price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></b>*</td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.MSRP) === "number") { %>
+      <tr>
+        <td>Factory MSRP</td>
+        <td><%= vehicle.MSRP.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.Trim) === "string" && vehicle.Trim.length > 0) { %>
+      <tr>
+        <td>Trim</td>
+        <td><%= vehicle.Trim %></td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.Drivetrain) === "string" && vehicle.Drivetrain.length > 0) { %>
+      <tr>
+        <td>Drivetrain</td>
+        <td><%= vehicle.Drivetrain %></td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.Odometer) === "number" && vehicle.Odometer > 0) { %>
+      <tr>
+        <td>Odometer</td>
+        <td><%= (Math.round(Number(vehicle.Odometer) / 100) * 100).toLocaleString()  %>mi</td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.ExtColor) === "object" && vehicle.ExtColor.length > 0) { %>
+      <tr>
+        <td>Exterior Color</td>
+        <td>
+          <%= vehicle.ExtColor[0] %>
+          <% if (typeof(vehicle.ExtColor[1]) === "string") { %>
+            <div class="is-color-block" style="background-color: <%= vehicle.ExtColor[1] %>;"></div>
+          <% } %>
+        </td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.IntColor) === "object" && vehicle.IntColor.length > 0) { %>
+      <tr>
+        <td>Interior Color</td>
+        <td>
+          <%= vehicle.IntColor[0] %>
+          <% if (typeof(vehicle.IntColor[1]) === "string") { %>
+            <div class="is-color-block" style="background-color: <%= vehicle.IntColor[1] %>;"></div>
+          <% } %>
+        </td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.StockNum) === "number" && vehicle.StockNum > 0) { %>
+      <tr>
+        <td>Stock #</td>
+        <td><%= vehicle.StockNum %></td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.VIN) === "string" && vehicle.VIN.length === 17) { %>
+      <tr>
+        <td>Vehicle Identification Number (VIN)</td>
+        <td>
+          <%= vehicle.VIN.substr(0, 9) %><b class="is-underlined"><%= vehicle.VIN.substr(9, 8) %></b>
+          <% if (vehicle.ShowCARFAX && vehicle.ShowCARFAX == true) { %>
+            (<a href='http://www.carfax.com/VehicleHistory/p/Report.cfx?partner=DVW_1&vin=<%= vehicle.VIN %>' target="_blank">CARFAX</a>)
+          <% } %>
+        </td>
+      </tr>
+    <% } %>
+    <% if (typeof(vehicle.EPA) === "object" && typeof(vehicle.EPA.City) === "number" && typeof(vehicle.EPA.Highway) === "number") { %>
+      <tr>
+        <td>EPA Rated MPG</td>
+        <td><%= vehicle.EPA.City %> City / <%= vehicle.EPA.Highway %> Highway mpg</td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
