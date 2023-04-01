@@ -9,8 +9,8 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "start": "nodemon server.js",
-    "setup": "nodejs ./setup.js"
+    "start": "nodemon scripts/start.js",
+    "setup": "nodejs scripts/setup.js"
   },
   "keywords": [],
   "author": "Alec M.",

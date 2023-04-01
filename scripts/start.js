@@ -20,24 +20,22 @@
  */
 
 // Imports
-import express from 'express';
-import dotenv from 'dotenv';
-import { web, api } from './routes/index.js';
+import express from "express";
+import dotenv from "dotenv";
+import { web, api } from "../routes/index.js";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.set('view engine', 'ejs');
-app.set('views', 'views');
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.use(express.static("static"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.set("view engine", "ejs");
+app.set("views", "views");
 app.use("/", web);
 app.use("/api/v1", api);
 
-(async () => {
-  app.listen(PORT, () => {
-    console.log(`Listening on: http://localhost:${PORT}`);
-  });
-})();
+app.listen(PORT, () => {
+  console.log(`Listening on: http://localhost:${PORT}`);
+});
