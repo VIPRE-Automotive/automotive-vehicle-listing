@@ -34,106 +34,115 @@ router.use(ratelimit({
 }));
 
 /**
- * Root directory
+ * Root API directory
  *
- * @author Alec M.
+ * @route GET /
  */
 router.get('/', async (request, response) => {
-  // Send default response
-  response.status(404).send("");
+  response.status(404).json({
+    status_code: 404,
+    data: null,
+    error: "Not Found",
+  });
 });
 
 /**
- * Retrieve all inventory from database
+ * Retrieve all inventory
  *
- * @author Alec M.
- * @date 2022-01-21
+ * @route GET /inventory
  */
 router.get('/inventory', async (request, response) => {
   // Retrieve all inventory
   const inventory = await getActiveInventory() || [];
 
-  // Return Result
-  response.status(200).send(inventory);
+  response.status(200).json({
+    status_code: 200,
+    data: inventory,
+    count: inventory.length,
+    error: null,
+  });
 });
 
 /**
- * Submit a interest form in a vehicle
+ * Submit an interest form
  *
- * @author Alec M.
- * @date 2022-01-19
+ * @route POST /interest
  */
 router.post('/interest', async (request, response) => {
   // Validate StockNum
   const StockNum = parseInt(request.body.stocknum) || 0;
   if (Number.isNaN(StockNum) || StockNum <= 0) {
-    response.status(400).send("Invalid stock number");
+    response.status(400).json({
+      status_code: 400,
+      error: "Invalid stock number",
+    });
     return;
   }
 
   // Check if the email is valid
   const Email = request.body.email || "";
   if (!Email || Email.indexOf("@") === -1) {
-    response.status(400).send("Invalid email provided");
+    response.status(400).json({
+      status_code: 400,
+      error: "Invalid email provided",
+    });
     return;
   }
 
   // Check if name is valid
   const FullName = request.body.fullname || "";
   if (!FullName || FullName.indexOf(" ") === -1) {
-    response.status(400).send("Invalid name provided");
+    response.status(400).json({
+      status_code: 400,
+      error: "Invalid name provided",
+    });
     return;
   }
 
   // Check if vehicle exists
   const vehicle = await getActiveInventoryItem(StockNum, false) || [];
   if (!vehicle) {
-    response.status(404).send("Vehicle not found");
+    response.status(400).json({
+      status_code: 400,
+      error: "Vehicle does not exist",
+    });
     return;
   }
 
   // Build Email and Template
-  const template = await ejs.renderFile(path.resolve() + "/views/email.ejs", {
-    env: process.env,
-    vehicle: vehicle,
-    request: request.body,
-  });
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
-  const status = await transporter.sendMail({
-    from: process.env.EMAIL_USERNAME,
-    to: Email,
-    bcc: process.env.COMPANY_EMAIL,
-    subject: `Vehicle Interest - ${vehicle.ModelYear} ${vehicle.Make} ${vehicle.Model}`,
-    html: template,
-    text: "Your email provider does not support HTML content."
-  }, null);
+  try {
+    const template = await ejs.renderFile(path.resolve() + "/views/email.ejs", {
+      env: process.env,
+      vehicle: vehicle,
+      request: request.body,
+    });
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
+    const status = await transporter.sendMail({
+      from: process.env.EMAIL_USERNAME,
+      to: Email,
+      bcc: process.env.COMPANY_EMAIL,
+      subject: `Vehicle Interest - ${vehicle.ModelYear} ${vehicle.Make} ${vehicle.Model}`,
+      html: template,
+      text: "Your email provider does not support HTML content."
+    }, null);
 
-  // Default
-  response.status(200).send("Success");
-});
-
-/**
- * Text search query for vehicles
- *
- * @author Alec M.
- * @date 2021-11-20 16:18:00
- */
- router.get('/search/:query', async (request, response) => {
-  // Generate fake response vehicles
-  throw new Error("Not Implemented");
-
-  // Render respons
-  response.render('partials/navigationSearchCardContainer', {
-    env: process.env,
-    vehicle: [],
-  });
+    response.status(200).json({
+      status_code: 200,
+      error: null,
+    });
+  } catch (e) {
+    response.status(500).json({
+      status_code: 500,
+      error: "Internal Server Error",
+    });
+  };
 });
 
 // Export Router
