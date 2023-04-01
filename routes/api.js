@@ -25,12 +25,9 @@ import ejs from 'ejs';
 import ratelimit from 'express-rate-limit';
 import nodemailer from 'nodemailer';
 import path from 'path';
-import db from '../database/index.js';
+import { getActiveInventory, getActiveInventoryItem } from '../database/index.js';
 
-// Instantiate router component
 const router = express.Router();
-
-// Use RateLimit Module
 router.use(ratelimit({
   windowMs: 15 * 1000,
   max: 5
@@ -54,7 +51,7 @@ router.get('/', async (request, response) => {
  */
 router.get('/inventory', async (request, response) => {
   // Retrieve all inventory
-  const inventory = await db.getActiveInventory() || [];
+  const inventory = await getActiveInventory() || [];
 
   // Return Result
   response.status(200).send(inventory);
@@ -69,7 +66,7 @@ router.get('/inventory', async (request, response) => {
 router.post('/interest', async (request, response) => {
   // Validate StockNum
   const StockNum = parseInt(request.body.stocknum) || 0;
-  if (StockNum === NaN || StockNum <= 0) {
+  if (Number.isNaN(StockNum) || StockNum <= 0) {
     response.status(400).send("Invalid stock number");
     return;
   }
@@ -89,7 +86,7 @@ router.post('/interest', async (request, response) => {
   }
 
   // Check if vehicle exists
-  const vehicle = await db.getActiveInventoryItem(StockNum, false) || [];
+  const vehicle = await getActiveInventoryItem(StockNum, false) || [];
   if (!vehicle) {
     response.status(404).send("Vehicle not found");
     return;
@@ -102,7 +99,6 @@ router.post('/interest', async (request, response) => {
     request: request.body,
   });
   const transporter = nodemailer.createTransport({
-    // @ts-ignore
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
     auth: {

@@ -22,12 +22,9 @@
 // Imports
 import express from 'express';
 import ratelimit from 'express-rate-limit';
-import db from '../database/index.js';
+import { getActiveInventory, getActiveInventoryItem } from '../database/index.js';
 
-// Instantiate router component
 const router = express.Router();
-
-// Use RateLimit Module
 router.use(ratelimit({
   windowMs: 15 * 1000,
   max: 5
@@ -40,7 +37,7 @@ router.use(ratelimit({
  */
 router.get('/', async (request, response) => {
   // Retrieve all inventory
-  const inventory = await db.getActiveInventory() || [];
+  const inventory = await getActiveInventory() || [];
 
   // Send default response
   response.render('search', {
@@ -61,13 +58,13 @@ router.get('/', async (request, response) => {
 router.get('/inventory/:StockNum', async (request, response) => {
   // Validation
   const StockNum = parseInt(request.params.StockNum) || 0;
-  if (StockNum === NaN || StockNum <= 0) {
+  if (Number.isNaN(StockNum) || StockNum <= 0) {
     response.status(404).render('error', {});
     return;
   }
 
   // Retrieve inventory vehicle
-  const vehicle = await db.getActiveInventoryItem(StockNum, true) || [];
+  const vehicle = await getActiveInventoryItem(StockNum, true) || [];
 
   // Send default response
   response.render('listing', {
