@@ -17,11 +17,9 @@ This is a comprehensive Automotive Vehicle Catalog/Listing application. The fron
 
 # Previews
 
-![index preview](screenshots/index.png)
-
-![vehicle listing](screenshots/listing.png)
-
-![interest form CTA](screenshots/interest-form.png)
+![index](https://user-images.githubusercontent.com/38357871/229307852-7721f46d-d510-47f9-b2dc-8d90bb8f4e3e.png)
+![interest-form](https://user-images.githubusercontent.com/38357871/229307858-86845c48-f5b9-478c-b9ba-e95d97422fe7.png)
+![listing](https://user-images.githubusercontent.com/38357871/229307864-dd59726b-639d-4b44-8e43-74965ce1da13.png)
 
 # Setup
 
