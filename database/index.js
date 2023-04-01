@@ -107,3 +107,39 @@ export const getActiveInventoryItem = async (StockNum, withImages = false) => {
     }, {onlyOnce: true});
   });
 };
+
+/**
+ * Get a subset of active inventory items from the database
+ *
+ * @param {string} query search query
+ * @param {number} limit max results
+ * @returns Promise<Array<Inventory>>
+ */
+export const searchActiveInventory = async (query, limit = 5) => {
+  return new Promise((resolve, reject) => {
+    onValue(dRef(database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), (snapshot) => {
+      const d = snapshot.val();
+      const results = [];
+
+      if (d && typeof(d) === "object") {
+        Object.values(d).forEach((vehicle) => {
+          const { ModelYear, Make, Model, StockNum } = vehicle;
+
+          if (results.length >= limit) {
+            return;
+          }
+          if (!vehicle || !ModelYear || !Make || !Model || !StockNum) {
+            return;
+          }
+          if (ModelYear.toString().includes(query) || Make.toLowerCase().includes(query.toLowerCase()) || Model.toLowerCase().includes(query.toLowerCase()) || StockNum.toString().includes(query)) {
+            results.push(vehicle);
+          }
+        });
+
+        resolve(results);
+      } else {
+        resolve(null);
+      }
+    }, {onlyOnce: true});
+  });
+};

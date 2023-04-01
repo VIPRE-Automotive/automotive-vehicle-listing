@@ -97,7 +97,7 @@ N/A
 
 # To-Do
 
-- [ ] Fix live vehicle search box
+- [X] Fix live vehicle search box
 - [ ] Fix "related item" recommendations
 - [ ] Implement search filters
 - [ ] Implement inventory listing "Share" card button

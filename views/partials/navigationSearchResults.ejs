@@ -1,0 +1,17 @@
+<% if (vehicles.length <= 0) { %>
+  <div class="dropdown-item p-0">
+    <p>No Results</p>
+  </div>
+<% } else { %>
+  <% for (let i = 0; i < vehicles.length; i++) { %>
+    <div class="dropdown-item p-0">
+      <%- include("navigationSearchCard", {
+        vehicle: vehicles[i]
+      }) %>
+    </div>
+
+    <% if (i+1 != vehicles.length) { %>
+      <hr class="dropdown-divider">
+    <% } %>
+  <% } %>
+<% } %>

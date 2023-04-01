@@ -52,7 +52,7 @@ for (let i = 0; i < 33; i++) {
   set(ref(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY + "/" + (i+1)), {
     Sold: Math.random() < 0.2,
     StockNum: i+1,
-    ModelYear: Math.floor(Math.random() * (2022 - 2017) + 2016),
+    ModelYear: Math.floor(Math.random() * (2023 - 2017) + 2016),
     Make: "Toyota",
     Model: "Camry",
     Trim: "XLE",

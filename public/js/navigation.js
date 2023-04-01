@@ -54,8 +54,8 @@ const searchDropDown = document.querySelector("#navigation-search-dropdown");
  */
 let isNavigationSearching = false;
 
-// Setup event listeners
 searchButton.onclick = navigationSearch;
+
 searchInput.onkeyup = (e) => {
   if (!searchInput.value || searchInput.value.trim().length === 0) {
     searchResults.innerHTML = "";
@@ -65,6 +65,19 @@ searchInput.onkeyup = (e) => {
     navigationSearch();
   }
 };
+
+searchInput.onblur = () => {
+  setTimeout(() => {
+    searchDropDown.classList.remove("is-active");
+  }, 100);
+};
+
+searchInput.onfocus = () => {
+  if (searchResults.innerHTML) {
+    searchDropDown.classList.add("is-active");
+  }
+};
+
 
 /**
  * Perform Navigation Search
@@ -86,7 +99,7 @@ async function navigationSearch() {
     isNavigationSearching = true;
   }
 
-  const response = await fetch("/api/v1/search/" + searchInput.value);
+  const response = await fetch("/search/" + searchInput.value);
   if (!response || response.status !== 200) {
     isNavigationSearching = false;
     return false;

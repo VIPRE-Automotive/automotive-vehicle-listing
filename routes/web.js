@@ -22,7 +22,9 @@
 // Imports
 import express from 'express';
 import ratelimit from 'express-rate-limit';
-import { getActiveInventory, getActiveInventoryItem } from '../database/index.js';
+import {
+  getActiveInventory, getActiveInventoryItem, searchActiveInventory
+} from '../database/index.js';
 
 const router = express.Router();
 router.use(ratelimit({
@@ -53,7 +55,6 @@ router.get('/', async (request, response) => {
  * Inventory View
  *
  * @author Alec M.
- * @date 2022-01-21
  */
 router.get('/inventory/:StockNum', async (request, response) => {
   // Validation
@@ -78,5 +79,25 @@ router.get('/inventory/:StockNum', async (request, response) => {
   });
 });
 
-// Export Router
+
+/**
+ * Text search query for vehicles
+ *
+ * @author Alec M.
+ */
+router.get('/search/:query', async (request, response) => {
+  const { query = "" } = request.params;
+  let vehicles = [];
+
+  if (query.trim() !== "") {
+    vehicles = await searchActiveInventory(query) || [];
+  }
+
+  // Render response
+  response.render('partials/navigationSearchResults', {
+    env: process.env,
+    vehicles: vehicles,
+  });
+});
+
 export default router;

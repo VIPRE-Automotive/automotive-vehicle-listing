@@ -145,5 +145,4 @@ router.post('/interest', async (request, response) => {
   };
 });
 
-// Export Router
 export default router;
