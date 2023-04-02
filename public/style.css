@@ -30,7 +30,7 @@ body {
 
 .card.is-out-of-stock {
   opacity: 0.8;
-  box-shadow: none !important;
+  /* box-shadow: none !important; */
   cursor: not-allowed !important;
   user-select: none;
   position: relative;

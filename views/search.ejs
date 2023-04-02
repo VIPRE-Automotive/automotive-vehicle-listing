@@ -7,7 +7,7 @@
     <meta property="og:title" content="Search Results" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="<%= env.APPLICATION_URL %>" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
   </head>
@@ -42,30 +42,28 @@
         <div class="columns p-0 m-0 py-3 is-vcentered">
           <div class="column is-6 p-0">
             <nav class="level">
-              <div class="level-left">
+              <div class="level-left" id="search-filter-tags">
                 <div class="level-item">
                   <p class="subtitle is-7">
-                    <strong>Search Filters</strong>
+                    <strong>Search Filters:</strong>
                   </p>
                 </div>
-                <div class="level-item">
-                  <div class="tags has-addons">
-                    <span class="tag">Year (2019+)</span>
-                    <a class="tag is-delete"></a>
+                <% if (context.filters.length > 0) { %>
+                  <% context.filters.forEach(filter => { %>
+                    <div class="level-item">
+                      <div class="tags has-addons">
+                        <span class="tag"><%= filter %></span>
+                        <a class="tag is-delete"></a>
+                      </div>
+                    </div>
+                  <% }) %>
+                <% } else { %>
+                  <div class="level-item">
+                    <div class="tags">
+                      <span class="tag is-white">None</span>
+                    </div>
                   </div>
-                </div>
-                <div class="level-item">
-                  <div class="tags has-addons">
-                    <span class="tag">Make (BMW)</span>
-                    <a class="tag is-delete"></a>
-                  </div>
-                </div>
-                <div class="level-item">
-                  <div class="tags has-addons">
-                    <span class="tag">Transmission (A/T)</span>
-                    <a class="tag is-delete"></a>
-                  </div>
-                </div>
+                <% } %>
               </div>
             </nav>
           </div>
@@ -99,20 +97,30 @@
                 </div>
                 <div class="field has-addons">
                   <p class="control">
-                    <button class="button" title="Card View" disabled>
+                    <a
+                      class="button"
+                      title="Card View"
+                      <%=(context.cardView === "card" ? "disabled" : "")%>
+                      <%=(context.cardView !== "card" ? `href=${context.oppositeViewUrl}` : "")%>
+                    >
                       <span class="icon is-small">
                         <i class="fas fa-border-all"></i>
                       </span>
                       <span>Card</span>
-                    </button>
+                    </a>
                   </p>
                   <p class="control">
-                    <button class="button" title="List View">
+                    <a
+                      class="button"
+                      title="List View"
+                      <%=(context.cardView === "list" ? "disabled" : "")%>
+                      <%=(context.cardView !== "list" ? `href=${context.oppositeViewUrl}` : "")%>
+                    >
                       <span class="icon is-small">
                         <i class="fas fa-list"></i>
                       </span>
                       <span>List</span>
-                    </button>
+                    </a>
                   </p>
                 </div>
               </div>
@@ -121,41 +129,114 @@
         </div>
 
         <!-- Search Results -->
-        <% if (typeof(inventory) === "object" && inventory instanceof Array && inventory.length > 0) { %>
-          <div class="columns is-multiline">
-            <% const limit = inventory.length > env.SEARCH_PAGINATION ? env.SEARCH_PAGINATION : inventory.length; %>
-            <% for (let i = 0; i < limit; i++) { %>
-              <div class="column is-4">
-                <%- include('partials/searchCard', {
-                  env: env,
-                  context: {
-                    page: "index",
-                  },
-                  vehicle: inventory[i],
-                }) %>
-              </div>
-            <% } %>
-          </div>
+        <% if (inventory && inventory instanceof Array && inventory.length > 0) { %>
+          <% if (context.cardView === "card") { %>
+            <div class="columns is-multiline">
+              <% inventory.forEach(vehicle => { %>
+                <div class="column is-4">
+                  <%- include('partials/searchCard', {
+                    env: env,
+                    context: {
+                      page: "index",
+                    },
+                    vehicle
+                  }) %>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="table-container">
+              <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+                <thead>
+                  <tr>
+                    <th><!-- Preview --></th>
+                    <th><abbr title="Stock Number">#</abbr></th>
+                    <th>Year</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Trim</th>
+                    <th><abbr title="Interior / Exterior">Colors</abbr></th>
+                    <th>Mileage</th>
+                    <th>Price</th>
+                    <th><!-- Actions --></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% inventory.forEach(vehicle => { %>
+                    <tr>
+                      <td style="width: 128px">
+                        <figure class="image" style="width: 128px; height: 96px">
+                          <img src="https://via.placeholder.com/1280x960" alt="Preview"/>
+                        </figure>
+                      </td>
+                      <td><%= vehicle.StockNum %></td>
+                      <td><%= vehicle.ModelYear %></td>
+                      <td><%= vehicle.Make %></td>
+                      <td><%= vehicle.Model %></td>
+                      <td><%= vehicle.Trim %></td>
+                      <td>
+                        <span>
+                          <%= vehicle.IntColor[0] %>
+                          <% if (typeof(vehicle.IntColor[1]) === "string") { %>
+                            <div class="is-color-block" style="background-color: <%= vehicle.IntColor[1] %>;"></div>
+                          <% } %>
+                        </span>
+                        /
+                        <span>
+                          <%= vehicle.ExtColor[0] %>
+                          <% if (typeof(vehicle.ExtColor[1]) === "string") { %>
+                            <div class="is-color-block" style="background-color: <%= vehicle.ExtColor[1] %>;"></div>
+                          <% } %>
+                        </span>
+                      </td>
+                      <td><%= (Math.round(Number(vehicle.Odometer) / 100) * 100).toLocaleString() %>mi</td>
+                      <td>
+                        <%= vehicle.Price.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          minimumFractionDigits: 0
+                        }) %>
+                      </td>
+                      <td><a href='<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>'>View</a></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
         <% } else { %>
-          <h2>Oops... No search results to display</h2>
+          <div class="notification is-warning is-light">
+            <strong>Oops!</strong> No results found.
+          </div>
         <% } %>
 
         <!-- Search Pagination -->
-        <% if (typeof(inventory) === "object" && inventory instanceof Array && inventory.length > env.SEARCH_PAGINATION) { %>
+        <% if (inventory && context.pages > 0 && context.pagination instanceof Array) { %>
           <nav class="pagination" role="navigation" aria-label="pagination">
-            <a class="pagination-previous is-disabled" title="This is the first page">Previous</a>
-            <a class="pagination-next">Next page</a>
+            <a
+              class="pagination-previous <%=(!context.prevUrl ? "is-disabled" : "")%>"
+              href="<%=context.prevUrl ? context.prevUrl : "#"%>"
+            >
+              Previous
+            </a>
+            <a
+              class="pagination-next <%=(!context.nextUrl ? "is-disabled" : "")%>"
+              href="<%=context.nextUrl ? context.nextUrl : "#"%>"
+            >
+              Next
+            </a>
             <ul class="pagination-list">
-              <li>
-                <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
-              </li>
-
-              <% const paginationCount = Math.ceil(inventory.length / env.SEARCH_PAGINATION); %>
-              <% for (let i = 1; i < paginationCount; i++) { %>
+              <% context.pagination.forEach(paginate => { %>
                 <li>
-                  <a class="pagination-link" aria-label="Goto page <%= i+1 %>"><%= i+1 %></a>
+                  <a
+                    class="pagination-link <%=(paginate.current ? "is-current" : "")%>"
+                    aria-label="Page <%=paginate.page%>"
+                    href="<%=paginate.url%>"
+                  >
+                    <%=paginate.page%>
+                  </a>
                 </li>
-              <% } %>
+              <% }) %>
             </ul>
           </nav>
         <% } %>

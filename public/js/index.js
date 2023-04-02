@@ -56,3 +56,27 @@ toggleAll.forEach((e) => {
     }
   };
 });
+
+// Enable Search Filter Tag Removal
+document.querySelectorAll("#search-filter-tags .is-delete").forEach((e) => {
+  e.onclick = () => {
+    const { origin, pathname } = window.location;
+
+    // Update URL
+    var newurl = `${origin}${pathname}${buildQuery()}`;
+    window.history.pushState({path:newurl}, '', newurl);
+
+    // Remove tag
+    e.parentElement?.parentElement?.remove();
+  };
+});
+
+/**
+ * Build query string from search filter tags
+ *
+ * @return {string} Query string
+ */
+function buildQuery() {
+  // TODO: Build query string from search filter tags
+  return "?abc=123&def=456";
+}

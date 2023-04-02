@@ -41,16 +41,25 @@ const storage = getStorage(appHandle);
 /**
  * Get all inventory items from the database
  *
- * @return Promise<Array<Inventory>>
+ * @param {number} [limit] number of items to return
+ * @param {number} [offset] number of items to skip
+ * @return Promise
  * @author Alec M.
  */
-export const getActiveInventory = async () => {
+export const getActiveInventory = async (limit = 10, offset = 0) => {
   return new Promise((resolve, reject) => {
     onValue(dRef(database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), (snapshot) => {
       const d = snapshot.val();
 
       if (d && typeof(d) === "object") {
-        resolve(Object.values(d));
+        const count = Object.keys(d).length;
+        const pages = Math.ceil(count / limit);
+
+        resolve({
+          count,
+          pages,
+          data: Object.values(d).slice(offset, offset + limit).filter(e => typeof e === "object")
+        });
       } else {
         resolve(null);
       }
@@ -152,8 +161,5 @@ export const searchActiveInventory = async (query, limit = 5) => {
  * @returns Promise<Array<Inventory>>
  */
 export const getInventoryRecommendations = async (StockNum, limit = 3) => {
-  // TODO: Actually implement this
-  const d = await getActiveInventory();
-
-  return d.slice(0, limit);
+  return getActiveInventory(limit);
 }

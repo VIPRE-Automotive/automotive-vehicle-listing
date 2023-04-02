@@ -22,6 +22,7 @@
 // Imports
 import express from 'express';
 import ratelimit from 'express-rate-limit';
+import { URL } from 'url';
 import {
   getActiveInventory, getActiveInventoryItem,
   getInventoryRecommendations, searchActiveInventory
@@ -34,21 +35,61 @@ router.use(ratelimit({
 }));
 
 /**
- * Root directory
+ * Root Search View
  *
  * @author Alec M.
  */
 router.get('/', async (request, response) => {
-  // Retrieve all inventory
-  const inventory = await getActiveInventory() || [];
+  const {
+    view: requestCardView,
+    page: requestPage,
+  } = request.query;
+  const cardView = ["card", "list"].includes(requestCardView) ? requestCardView : "card"
+  const page = parseInt(requestPage) || 1;
 
-  // Send default response
+  const {
+    APPLICATION_URL = "",
+    SEARCH_PAGINATION,
+  } = process.env;
+
+  const {
+    data,
+    count,
+    pages,
+  } = await getActiveInventory(SEARCH_PAGINATION, (page-1) * SEARCH_PAGINATION) || [];
+
+  const url = new URL(APPLICATION_URL);
+  url.searchParams.append("view", cardView);
+
+  const pagination = [];
+  for (let i = 1; i <= pages; i++) {
+    url.searchParams.set("page", i);
+    pagination.push({
+      page: i,
+      url: url.toString(),
+      current: i === page,
+    });
+  }
+
+  const oppositeView = cardView === "card" ? "list" : "card";
+  url.searchParams.set("page", page);
+  url.searchParams.set("view", oppositeView);
+
   response.render('search', {
     env: process.env,
     context: {
-      query: "All Vehicles"
+      query: "All Vehicles",
+      filters: ["Year (All)", "Make (BMW)", "Transmission (A/T)"],
+      cardView: cardView,
+      oppositeViewUrl: url.toString(),
+      page: page,
+      pages: pages,
+      pagination: pagination,
+      prevUrl: page > 1 && pagination[page-2] ? pagination[page-2].url : null,
+      nextUrl: page < pages && pagination[page] ? pagination[page].url : null,
+      count: count,
     },
-    inventory: inventory
+    inventory: data
   });
 });
 
@@ -58,6 +99,9 @@ router.get('/', async (request, response) => {
  * @author Alec M.
  */
 router.get('/inventory/:StockNum', async (request, response) => {
+  const { referer = "" } = request.headers;
+  const { APPLICATION_URL = "" } = process.env;
+
   // Validation
   const StockNum = parseInt(request.params.StockNum) || 0;
   if (Number.isNaN(StockNum) || StockNum <= 0) {
@@ -67,14 +111,13 @@ router.get('/inventory/:StockNum', async (request, response) => {
 
   // Retrieve inventory vehicle
   const vehicle = await getActiveInventoryItem(StockNum, true) || [];
-  const recommendations = await getInventoryRecommendations(StockNum) || [];
+  const { data: recommendations } = await getInventoryRecommendations(StockNum) || [];
 
-  // Send default response
   response.render('listing', {
     env: process.env,
     context: {
       query: "",
-      queryLink: "/",
+      back: referer.indexOf(APPLICATION_URL) !== -1 ? referer : "/",
     },
     vehicle: vehicle,
     recommendations: recommendations,

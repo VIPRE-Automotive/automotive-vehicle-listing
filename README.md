@@ -89,16 +89,19 @@ N/A
 
 # Requirements & Dependencies
 
-- Google Firebase (Realtime DB and Storage)
-- Bulma 0.93
+- Google Firebase
+- Bulma 0.9.4
 - Font-Awesome 5.15.4
-- Node.js, Express, & EJS
-- Etc
+- Node.js 14+
+- Express/EJS
 
 # To-Do
 
 - [X] Fix live vehicle search box
-- [ ] Fix "related item" recommendations
+- [ ] Finish "Similar Vehicles" recommendation system
 - [ ] Implement search filters
 - [ ] Implement inventory listing "Share" card button
-- [ ] Implement inventory listing filter (Sold/Available), display type (card/list), sort by (Price, age, etc)
+- [ ] Implement inventory listing filters:
+  - [ ] Sold/Available
+  - [X] Display type (card/list)
+  - [ ] Sort by (Price, age, etc)
