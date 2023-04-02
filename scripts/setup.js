@@ -49,16 +49,19 @@ const db = getDatabase(firebase);
 
 // Generate 32 vehicles
 for (let i = 0; i < 33; i++) {
+  const price = Math.floor(Math.random() * 50000) + 10000;
+
   set(ref(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY + "/" + (i+1)), {
     Sold: Math.random() < 0.2,
     StockNum: i+1,
     ModelYear: Math.floor(Math.random() * (2023 - 2017) + 2016),
-    Make: "Toyota",
-    Model: "Camry",
-    Trim: "XLE",
-    Drivetrain: "FWD",
-    Price: 23075,
-    MSRP: 27950,
+    Make: ["BMW", "Toyota", "Nissan", "Honda", "Ford", "Chevrolet"][Math.floor(Math.random() * 6)],
+    Model: ["X5", "Camry", "Altima", "Civic", "F-150", "Silverado"][Math.floor(Math.random() * 6)],
+    Trim: ["M", "SE", "S", "Sport", "Lariat", "LT"][Math.floor(Math.random() * 6)],
+    Transmission: Math.random() < 0.5 ? "Automatic" : "Manual",
+    Drivetrain: ["AWD", "FWD", "RWD"][Math.floor(Math.random() * 3)],
+    Price: price,
+    MSRP: price + Math.floor(Math.random() * 5000) + 1000,
     VIN: "T7H29FE0DGK025802",
     IntColor: ["Black", "#3b3b3b"],
     ExtColor: ["Jigglypuff", "#ff9ff3"],
