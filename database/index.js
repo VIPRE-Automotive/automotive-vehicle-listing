@@ -44,14 +44,14 @@ const storage = getStorage(appHandle);
  * @param {object} [sort]
  * @param {string} [sort.key] sort by key
  * @param {string} [sort.order] sort order
- * @param {object} [filter] all|sold|available
+ * @param {function} [filter] vehicle filter function
  * @param {object} [paginate]
  * @param {number} [paginate.limit] number of items to return
  * @param {number} [paginate.offset] number of items to skip
  * @return Promise
  * @author Alec M.
  */
-export const getActiveInventory = async (sort, filter, paginate = {}) => {
+export const getActiveInventory = async (sort, filter = undefined, paginate = {}) => {
   const { key, order = "asc" } = sort || {};
   const { limit = 10, offset = 0 } = paginate || {};
 
@@ -60,15 +60,16 @@ export const getActiveInventory = async (sort, filter, paginate = {}) => {
       const d = snapshot.val();
 
       if (d && typeof(d) === "object") {
-        const count = Object.keys(d).length;
+        const data = Object.values(d)
+          .filter(e => typeof e === "object")
+          .filter(typeof filter === "function" ? filter : () => true);
+        const count = data.length;
         const pages = Math.ceil(count / limit);
 
         resolve({
           count,
           pages,
-          data: Object.values(d)
-            .filter(e => typeof e === "object")
-            .filter(e => filter && filter !== "all" ? e.Sold === (filter === "sold") : true)
+          data: data
             .sort((a, b) => {
               if (!key) { return 0; }
 
@@ -77,6 +78,36 @@ export const getActiveInventory = async (sort, filter, paginate = {}) => {
                 : b[key].toString().localeCompare(a[key].toString());
             })
             .slice(offset, offset + limit)
+        });
+      } else {
+        resolve(null);
+      }
+    }, {onlyOnce: true});
+  });
+};
+
+/**
+ * Gets filtering metadata for the active inventory
+ *
+ * @returns Promise
+ */
+export const getActiveInventoryMeta = async () => {
+  return new Promise((resolve, reject) => {
+    onValue(dRef(database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), (snapshot) => {
+      const d = snapshot.val();
+
+      if (d && typeof(d) === "object") {
+        const data = Object.values(d).filter(e => typeof e === "object")
+
+        resolve({
+          Makes: data.reduce((acc, value) => {
+            acc[value.Make] = (acc[value.Make] || 0) + 1;
+            return acc;
+          }, {}),
+          ModelYears: data.reduce((acc, value) => {
+            acc[value.ModelYear] = (acc[value.ModelYear] || 0) + 1;
+            return acc;
+          }, {}),
         });
       } else {
         resolve(null);

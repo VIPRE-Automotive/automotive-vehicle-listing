@@ -1,97 +1,43 @@
-<aside class="menu" style="position: sticky; top: 0.75rem;">
+<aside class="menu" style="position: sticky; top: 0.75rem;" id="search-sidebar">
   <p class="menu-label">Vehicle</p>
   <ul class="menu-list">
     <!-- Model Year Selection -->
     <li class="is-active" data-toggle="expand">
-      <a>Model Year</a>
-      <ul>
-        <li data-toggle="all">
-          <a>
-            <label class="checkbox">
-              <input type="checkbox" checked>
-              All (7)
-            </label>
-          </a>
-        </li>
-        <li>
-          <a>
-            <label class="checkbox">
-              <input type="checkbox">
-              2022 (3)
-            </label>
-          </a>
-        </li>
-        <li>
-          <a>
-            <label class="checkbox">
-              <input type="checkbox">
-              2021 (2)
-            </label>
-          </a>
-        </li>
-        <li>
-          <a>
-            <label class="checkbox">
-              <input type="checkbox">
-              2020 (1)
-            </label>
-          </a>
-        </li>
-        <li>
-          <a>
-            <label class="checkbox">
-              <input type="checkbox">
-              2019 (3)
-            </label>
-          </a>
-        </li>
+      <a>Year</a>
+      <ul id="filter-model-year">
+        <%
+          const yearFilter = Filters.find(filter => filter.key === "ModelYear");
+        %>
+        <% Object.keys(ModelYears).forEach(ModelYear => { %>
+          <li>
+            <a>
+              <label class="checkbox">
+                <input type="checkbox" value="<%= ModelYear %>" <%=(yearFilter && yearFilter.raw.includes(ModelYear) ? "checked" : "")%>>
+                <%= ModelYear %> (<%= ModelYears[ModelYear] %>)
+              </label>
+            </a>
+          </li>
+        <% }) %>
       </ul>
     </li>
 
     <!-- Make Selection -->
     <li data-toggle="expand">
       <a>Make</a>
-      <ul>
-        <li data-toggle="all">
-          <a>
-            <label class="checkbox">
-              <input type="checkbox" checked>
-              All (7)
-            </label>
-          </a>
-        </li>
-        <li>
-          <a>
-            <label class="checkbox">
-              <input type="checkbox">
-              Toyota (3)
-            </label>
-          </a>
-        </li>
-        <li>
-          <a>
-            <label class="checkbox">
-              <input type="checkbox">
-              Ford (1)
-            </label>
-          </a>
-        </li>
-        <li>
-          <a>
-            <label class="checkbox">
-              <input type="checkbox">
-              Nissan (1)
-            </label>
-          </a>
-        </li>
-        <li>
-          <a>
-            <label class="checkbox">
-              <input type="checkbox">
-              BMW (1)
-            </label>
-          </a>
-        </li>
+      <ul id="filter-make">
+        <%
+          const makeFilter = Filters.find(filter => filter.key === "Make");
+        %>
+        <% Object.keys(Makes).forEach(Make => { %>
+          <li>
+            <a>
+              <label class="checkbox">
+                <input type="checkbox" value="<%= Make %>" <%=(makeFilter && makeFilter.raw.includes(Make) ? "checked" : "")%>>
+                <%= Make %> (<%= Makes[Make] %>)
+              </label>
+            </a>
+          </li>
+        <% }) %>
       </ul>
     </li>
   </ul>
@@ -101,10 +47,13 @@
     <li data-toggle="expand">
       <a>Transmission</a>
       <ul>
+        <%
+          const transFilter = Filters.find(filter => filter.key === "Transmission");
+        %>
         <li>
           <a>
             <label class="radio">
-              <input type="radio" name="transmission">
+              <input type="radio" name="transmission" value="All" <%=(!transFilter || !transFilter.raw ? "checked" : "")%>>
               All
             </label>
           </a>
@@ -112,7 +61,7 @@
         <li>
           <a>
             <label class="radio">
-              <input type="radio" name="transmission">
+              <input type="radio" name="transmission" value="Automatic" <%=(transFilter && transFilter.raw === "Automatic" ? "checked" : "")%>>
               Automatic
             </label>
           </a>
@@ -120,7 +69,7 @@
         <li>
           <a>
             <label class="radio">
-              <input type="radio" name="transmission">
+              <input type="radio" name="transmission" value="Manual" <%=(transFilter && transFilter.raw === "Manual" ? "checked" : "")%>>
               Manual
             </label>
           </a>
@@ -132,10 +81,13 @@
     <li data-toggle="expand">
       <a>Drivetrain</a>
       <ul>
+        <%
+          const driveFilter = Filters.find(filter => filter.key === "Drivetrain");
+        %>
         <li>
           <a>
             <label class="radio">
-              <input type="radio" name="drivetrain">
+              <input type="radio" name="drivetrain" value="All" <%=(!driveFilter || !driveFilter.raw ? "checked" : "")%>>
               All
             </label>
           </a>
@@ -143,7 +95,7 @@
         <li>
           <a>
             <label class="radio">
-              <input type="radio" name="drivetrain">
+              <input type="radio" name="drivetrain" value="AWD" <%=(driveFilter && driveFilter.raw === "AWD" ? "checked" : "")%>>
               AWD
             </label>
           </a>
@@ -151,7 +103,7 @@
         <li>
           <a>
             <label class="radio">
-              <input type="radio" name="drivetrain">
+              <input type="radio" name="drivetrain" value="FWD" <%=(driveFilter && driveFilter.raw === "FWD" ? "checked" : "")%>>
               FWD
             </label>
           </a>
@@ -159,8 +111,44 @@
         <li>
           <a>
             <label class="radio">
-              <input type="radio" name="drivetrain">
+              <input type="radio" name="drivetrain" value="RWD" <%=(driveFilter && driveFilter.raw === "RWD" ? "checked" : "")%>>
               RWD
+            </label>
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <p class="menu-label">Other</p>
+  <ul class="menu-list">
+    <!-- Tranmission Selection -->
+    <li data-toggle="expand">
+      <a>Availability</a>
+      <ul>
+        <%
+          const soldFilter = Filters.find(filter => filter.key === "Availability");
+        %>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="availability" value="All" <%=(!soldFilter || !soldFilter.raw ? "checked" : "")%>>
+              All
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="availability" value="Available" <%=(soldFilter && soldFilter.raw === "Available" ? "checked" : "")%>>
+              Available
+            </label>
+          </a>
+        </li>
+        <li>
+          <a>
+            <label class="radio">
+              <input type="radio" name="availability" value="Sold" <%=(soldFilter && soldFilter.raw === "Sold" ? "checked" : "")%>>
+              Sold
             </label>
           </a>
         </li>
@@ -171,10 +159,10 @@
   <!-- Control Buttons -->
   <div class="columns mt-4 px-3">
     <div class="column is-8 p-0">
-      <button class="button is-fullwidth">Search</button>
+      <button class="button is-fullwidth" id="sidebar-search">Search</button>
     </div>
     <div class="column p-0">
-      <button class="button is-text">Reset</button>
+      <button class="button is-text" id="sidebar-reset">Reset</button>
     </div>
   </div>
 </aside>

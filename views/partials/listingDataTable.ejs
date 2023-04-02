@@ -18,6 +18,12 @@
         <td><%= vehicle.Trim %></td>
       </tr>
     <% } %>
+    <% if (typeof(vehicle.Transmission) === "string" && vehicle.Transmission.length > 0) { %>
+      <tr>
+        <td>Transmission</td>
+        <td><%= vehicle.Transmission %></td>
+      </tr>
+    <% } %>
     <% if (typeof(vehicle.Drivetrain) === "string" && vehicle.Drivetrain.length > 0) { %>
       <tr>
         <td>Drivetrain</td>

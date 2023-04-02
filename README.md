@@ -99,7 +99,8 @@ N/A
 
 - [X] Fix live vehicle search box
 - [ ] Finish "Similar Vehicles" recommendation system
-- [ ] Implement search filters
+- [ ] Separate Routes from controller
+- [X] Implement sidebar search filters
 - [ ] Implement inventory listing "Share" card button
 - [X] Implement inventory listing filters:
   - [X] Sold/Available

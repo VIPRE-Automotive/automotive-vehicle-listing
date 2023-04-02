@@ -18,7 +18,11 @@
     <div class="columns p-0 m-0">
       <!-- Sidebar -->
       <div class="column is-2 has-background-light">
-        <%- include('partials/searchSidebar', {env: env}) %>
+        <%- include('partials/searchSidebar', {
+          Filters: context.filters,
+          ModelYears: inventoryMetadata.ModelYears,
+          Makes: inventoryMetadata.Makes,
+        }) %>
       </div>
 
       <!-- Search Results -->
@@ -52,8 +56,8 @@
                   <% context.filters.forEach(filter => { %>
                     <div class="level-item">
                       <div class="tags has-addons">
-                        <span class="tag"><%= filter %></span>
-                        <a class="tag is-delete"></a>
+                        <span class="tag"><%= filter.value %></span>
+                        <a class="tag is-delete" data-filter-key="<%= filter.key %>"></a>
                       </div>
                     </div>
                   <% }) %>
@@ -70,21 +74,6 @@
           <div class="column p-0">
             <div class="field is-horizontal is-pulled-right">
               <div class="field-body">
-                <div class="field">
-                  <div class="control has-icons-left">
-                    <div class="select is-fullwidth">
-                      <select id="search-filter-filter">
-                        <option value="" disabled <%=(!context.filter ? "selected" : "")%>>Filter</option>
-                        <option value="all" <%=(context.filter === "all" ? "selected" : "")%>>All</option>
-                        <option value="available" <%=(context.filter === "available" ? "selected" : "")%>>Available</option>
-                        <option value="sold" <%=(context.filter === "sold" ? "selected" : "")%>>Sold</option>
-                      </select>
-                    </div>
-                    <span class="icon is-medium is-left">
-                      <i class="fas fa-filter"></i>
-                    </span>
-                  </div>
-                </div>
                 <div class="field">
                   <div class="control has-icons-left">
                     <div class="select is-fullwidth">
