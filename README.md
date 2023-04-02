@@ -101,7 +101,7 @@ N/A
 - [ ] Finish "Similar Vehicles" recommendation system
 - [ ] Implement search filters
 - [ ] Implement inventory listing "Share" card button
-- [ ] Implement inventory listing filters:
-  - [ ] Sold/Available
+- [X] Implement inventory listing filters:
+  - [X] Sold/Available
   - [X] Display type (card/list)
-  - [ ] Sort by (Price, age, etc)
+  - [X] Sort by (Price, age, etc)

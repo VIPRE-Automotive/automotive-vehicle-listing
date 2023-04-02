@@ -71,29 +71,35 @@
             <div class="field is-horizontal is-pulled-right">
               <div class="field-body">
                 <div class="field">
-                  <p class="control is-expanded">
+                  <div class="control has-icons-left">
                     <div class="select is-fullwidth">
-                      <select>
-                        <option selected disabled>Filter</option>
-                        <option>All</option>
-                        <option>Available</option>
-                        <option>Sold</option>
+                      <select id="search-filter-filter">
+                        <option value="" disabled <%=(!context.filter ? "selected" : "")%>>Filter</option>
+                        <option value="all" <%=(context.filter === "all" ? "selected" : "")%>>All</option>
+                        <option value="available" <%=(context.filter === "available" ? "selected" : "")%>>Available</option>
+                        <option value="sold" <%=(context.filter === "sold" ? "selected" : "")%>>Sold</option>
                       </select>
                     </div>
-                  </p>
+                    <span class="icon is-medium is-left">
+                      <i class="fas fa-filter"></i>
+                    </span>
+                  </div>
                 </div>
                 <div class="field">
-                  <p class="control is-expanded">
+                  <div class="control has-icons-left">
                     <div class="select is-fullwidth">
-                      <select>
-                        <option selected disabled>Sort By</option>
-                        <option>Model Year</option>
-                        <option>Make</option>
-                        <option>Mileage</option>
-                        <option>Price</option>
+                      <select id="search-filter-sort">
+                        <option disabled <%=(!context.sort ? "selected" : "")%>>Sort By</option>
+                        <option value="ModelYear" <%=(context.sort === "ModelYear" ? "selected" : "")%>>Model Year</option>
+                        <option value="Make" <%=(context.sort === "Make" ? "selected" : "")%>>Make</option>
+                        <option value="Odometer" <%=(context.sort === "Odometer" ? "selected" : "")%>>Mileage</option>
+                        <option value="Price" <%=(context.sort === "Price" ? "selected" : "")%>>Price</option>
                       </select>
                     </div>
-                  </p>
+                    <span class="icon is-medium is-left">
+                      <i class="fas fa-sort"></i>
+                    </span>
+                  </div>
                 </div>
                 <div class="field has-addons">
                   <p class="control">

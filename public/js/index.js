@@ -60,23 +60,45 @@ toggleAll.forEach((e) => {
 // Enable Search Filter Tag Removal
 document.querySelectorAll("#search-filter-tags .is-delete").forEach((e) => {
   e.onclick = () => {
-    const { origin, pathname } = window.location;
+    const url = new URL(window.location.href);
 
-    // Update URL
-    var newurl = `${origin}${pathname}${buildQuery()}`;
-    window.history.pushState({path:newurl}, '', newurl);
+    // TODO: remove the filter from the query string
 
     // Remove tag
     e.parentElement?.parentElement?.remove();
   };
 });
 
-/**
- * Build query string from search filter tags
- *
- * @return {string} Query string
- */
-function buildQuery() {
-  // TODO: Build query string from search filter tags
-  return "?abc=123&def=456";
-}
+// Enable Search Filter (All/Sold/etc)
+document.querySelector("#search-filter-filter").onchange = (e) => {
+  const value = e.target.value;
+  const url = new URL(window.location.href);
+
+  if (url.searchParams.get("filter") === value || (!url.searchParams.get("filter") && !value)) {
+    return;
+  }
+  if (!value) {
+    url.searchParams.delete("filter");
+  } else {
+    url.searchParams.set("filter", value);
+  }
+
+  window.location.href = url.href;
+};
+
+// Enable Search Sort
+document.querySelector("#search-filter-sort").onchange = (e) => {
+  const value = e.target.value;
+  const url = new URL(window.location.href);
+
+  if (url.searchParams.get("sort") === value || (!url.searchParams.get("sort") && !value)) {
+    return;
+  }
+  if (!value) {
+    url.searchParams.delete("sort");
+  } else {
+    url.searchParams.set("sort", value);
+  }
+
+  window.location.href = url.href;
+};

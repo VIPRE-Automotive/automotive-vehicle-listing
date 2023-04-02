@@ -41,12 +41,20 @@ const storage = getStorage(appHandle);
 /**
  * Get all inventory items from the database
  *
- * @param {number} [limit] number of items to return
- * @param {number} [offset] number of items to skip
+ * @param {object} [sort]
+ * @param {string} [sort.key] sort by key
+ * @param {string} [sort.order] sort order
+ * @param {object} [filter] all|sold|available
+ * @param {object} [paginate]
+ * @param {number} [paginate.limit] number of items to return
+ * @param {number} [paginate.offset] number of items to skip
  * @return Promise
  * @author Alec M.
  */
-export const getActiveInventory = async (limit = 10, offset = 0) => {
+export const getActiveInventory = async (sort, filter, paginate = {}) => {
+  const { key, order = "asc" } = sort || {};
+  const { limit = 10, offset = 0 } = paginate || {};
+
   return new Promise((resolve, reject) => {
     onValue(dRef(database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), (snapshot) => {
       const d = snapshot.val();
@@ -58,7 +66,17 @@ export const getActiveInventory = async (limit = 10, offset = 0) => {
         resolve({
           count,
           pages,
-          data: Object.values(d).slice(offset, offset + limit).filter(e => typeof e === "object")
+          data: Object.values(d)
+            .filter(e => typeof e === "object")
+            .filter(e => filter && filter !== "all" ? e.Sold === (filter === "sold") : true)
+            .sort((a, b) => {
+              if (!key) { return 0; }
+
+              return order === "asc"
+                ? a[key].toString().localeCompare(b[key].toString())
+                : b[key].toString().localeCompare(a[key].toString());
+            })
+            .slice(offset, offset + limit)
         });
       } else {
         resolve(null);
@@ -161,5 +179,5 @@ export const searchActiveInventory = async (query, limit = 5) => {
  * @returns Promise<Array<Inventory>>
  */
 export const getInventoryRecommendations = async (StockNum, limit = 3) => {
-  return getActiveInventory(limit);
+  return getActiveInventory(null, null, {limit});
 }

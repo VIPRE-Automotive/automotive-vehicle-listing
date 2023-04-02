@@ -43,9 +43,15 @@ router.get('/', async (request, response) => {
   const {
     view: requestCardView,
     page: requestPage,
+    filter: requestFilter,
+    sort: requestSortKey,
+    order: requestSortOrder,
   } = request.query;
   const cardView = ["card", "list"].includes(requestCardView) ? requestCardView : "card"
   const page = parseInt(requestPage) || 1;
+  const filter = ["all", "sold", "available"].includes(requestFilter) ? requestFilter : null;
+  const sort = ["ModelYear", "Make", "Odometer", "Price"].includes(requestSortKey) ? requestSortKey : null;
+  const order = ["asc", "desc"].includes(requestSortOrder) ? requestSortOrder : null;
 
   const {
     APPLICATION_URL = "",
@@ -56,10 +62,16 @@ router.get('/', async (request, response) => {
     data,
     count,
     pages,
-  } = await getActiveInventory(SEARCH_PAGINATION, (page-1) * SEARCH_PAGINATION) || [];
+  } = await getActiveInventory(
+    {key: sort, order},
+    filter,
+    {limit: SEARCH_PAGINATION, offset: (page-1) * SEARCH_PAGINATION}
+  ) || [];
 
   const url = new URL(APPLICATION_URL);
   url.searchParams.append("view", cardView);
+  url.searchParams.append("sort", sort);
+  url.searchParams.append("filter", filter);
 
   const pagination = [];
   for (let i = 1; i <= pages; i++) {
@@ -80,6 +92,8 @@ router.get('/', async (request, response) => {
     context: {
       query: "All Vehicles",
       filters: ["Year (All)", "Make (BMW)", "Transmission (A/T)"],
+      sort: sort,
+      filter: filter,
       cardView: cardView,
       oppositeViewUrl: url.toString(),
       page: page,
