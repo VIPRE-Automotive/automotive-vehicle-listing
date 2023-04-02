@@ -23,7 +23,8 @@
 import express from 'express';
 import ratelimit from 'express-rate-limit';
 import {
-  getActiveInventory, getActiveInventoryItem, searchActiveInventory
+  getActiveInventory, getActiveInventoryItem,
+  getInventoryRecommendations, searchActiveInventory
 } from '../database/index.js';
 
 const router = express.Router();
@@ -66,6 +67,7 @@ router.get('/inventory/:StockNum', async (request, response) => {
 
   // Retrieve inventory vehicle
   const vehicle = await getActiveInventoryItem(StockNum, true) || [];
+  const recommendations = await getInventoryRecommendations(StockNum) || [];
 
   // Send default response
   response.render('listing', {
@@ -75,7 +77,7 @@ router.get('/inventory/:StockNum', async (request, response) => {
       queryLink: "/",
     },
     vehicle: vehicle,
-    recommendations: [], // TBD
+    recommendations: recommendations,
   });
 });
 

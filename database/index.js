@@ -143,3 +143,17 @@ export const searchActiveInventory = async (query, limit = 5) => {
     }, {onlyOnce: true});
   });
 };
+
+/**
+ * Generate a list of related/recommended vehicles
+ *
+ * @param {number} StockNum The StockNum of the vehicle to get recommendations for
+ * @param {number} [limit]
+ * @returns Promise<Array<Inventory>>
+ */
+export const getInventoryRecommendations = async (StockNum, limit = 3) => {
+  // TODO: Actually implement this
+  const d = await getActiveInventory();
+
+  return d.slice(0, limit);
+}
