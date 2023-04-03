@@ -122,6 +122,9 @@ document.querySelector("#sidebar-search").onclick = () => {
     url.searchParams.delete("Availability");
   }
 
+  // Reset page
+  url.searchParams.set("page", "1");
+
   window.location.href = url.href;
 };
 

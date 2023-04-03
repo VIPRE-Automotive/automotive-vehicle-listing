@@ -126,10 +126,11 @@ export const getActiveInventoryMeta = async () => {
  * - url: file download URL
  *
  * @param {string} StockNum
+ * @param {number} [limit] max images to return
  * @returns Promise<Array<Object>>
  */
-export const getInventoryItemImages = async (StockNum = "") => {
-  const records = await list(sRef(storage, activeInventoryStorage + "/" + StockNum), {maxResults: 10});
+export const getInventoryItemImages = async (StockNum = "", limit = 10) => {
+  const records = await list(sRef(storage, activeInventoryStorage + "/" + StockNum), {maxResults: limit});
 
   if (!records?.items || records.items.length === 0) {
     return [];

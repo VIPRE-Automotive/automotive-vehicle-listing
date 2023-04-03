@@ -104,7 +104,7 @@ N/A
 
 - [X] Fix live vehicle search box
 - [ ] Finish "Similar Vehicles" recommendation system
-- [ ] Implement vehicle image gallery
+- [X] Implement vehicle image gallery
 - [ ] Separate Routes from controller
 - [X] Implement sidebar search filters
 - [ ] Implement inventory listing "Share" card button
@@ -112,4 +112,3 @@ N/A
   - [X] Sold/Available
   - [X] Display type (card/list)
   - [X] Sort by (Price, age, etc)
-- [ ] Convert all StockNum from numbers to uuid

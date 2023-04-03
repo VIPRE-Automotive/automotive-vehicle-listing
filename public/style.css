@@ -77,3 +77,15 @@ aside.menu .menu-list li:not(.is-active) > ul {
   position: -webkit-sticky;
   position: sticky;
 }
+
+.is-pointer {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.is-pointer img {
+  -webkit-user-drag: none;
+}

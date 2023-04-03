@@ -168,7 +168,7 @@
                   <td><%= (Math.round(Number(vehicle.Odometer) / 100) * 100).toLocaleString()  %>mi</td>
                 </tr>
               <% } %>
-              <% if (typeof(vehicle.StockNum) === "number" && vehicle.StockNum > 0) { %>
+              <% if (typeof(vehicle.StockNum) === "string") { %>
                 <tr>
                   <td>Stock #</td>
                   <td><%= vehicle.StockNum %></td>

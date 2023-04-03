@@ -2,7 +2,11 @@
   <!-- Card Image -->
   <div class="card-image">
     <figure class="image is-4by3">
-      <img src="https://api.placeholder.app/image/1280x960" alt="Product image">
+      <% if (vehicle.Images instanceof Array && typeof vehicle.Images[0] === "object" && typeof vehicle.Images[0].url === "string") { %>
+        <img src="<%=vehicle.Images[0].url%>>" alt="Product image">
+      <% } else { %>
+        <img src="https://api.placeholder.app/image/1280x960?text=Coming Soon..." alt="Placeholder product image">
+      <% } %>
     </figure>
   </div>
 
@@ -38,7 +42,7 @@
   </div>
 
   <!-- Pricing Table -->
-  <% if (context.page !== "listing" && typeof(vehicle.MSRP) === "number" && typeof(vehicle.Price) === "number") { %>
+  <% if (context.page !== "listing" && typeof(vehicle.MSRP) === "string" && typeof(vehicle.Price) === "string") { %>
     <div class="content">
       <div class="px-3 has-text-centered">
         <nav class="level is-mobile">
@@ -46,7 +50,7 @@
             <div>
               <p class="heading">Original MSRP</p>
               <p class="title has-text-weight-normal">
-                <%= vehicle.MSRP.toLocaleString('en-US', {
+                <%= parseFloat(vehicle.MSRP).toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: 0
@@ -58,7 +62,7 @@
             <div>
               <p class="heading">Our Price</p>
               <p class="title">
-                <%= vehicle.Price.toLocaleString('en-US', {
+                <%= parseFloat(vehicle.Price).toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: 0

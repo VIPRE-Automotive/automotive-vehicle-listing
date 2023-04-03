@@ -1,15 +1,15 @@
 <table class="table is-hoverable">
   <tbody>
-    <% if (typeof(vehicle.Price) === "number") { %>
+    <% if (typeof(vehicle.Price) === "string") { %>
       <tr>
         <td>Our Price</td>
-        <td><b><%= vehicle.Price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></b>*</td>
+        <td><b><%= parseFloat(vehicle.Price).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></b>*</td>
       </tr>
     <% } %>
-    <% if (typeof(vehicle.MSRP) === "number") { %>
+    <% if (typeof(vehicle.MSRP) === "string") { %>
       <tr>
         <td>Factory MSRP</td>
-        <td><%= vehicle.MSRP.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
+        <td><%= parseFloat(vehicle.MSRP).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0}) %></td>
       </tr>
     <% } %>
     <% if (typeof(vehicle.Trim) === "string" && vehicle.Trim.length > 0) { %>
@@ -58,7 +58,7 @@
         </td>
       </tr>
     <% } %>
-    <% if (typeof(vehicle.StockNum) === "number" && vehicle.StockNum > 0) { %>
+    <% if (typeof(vehicle.StockNum) === "string") { %>
       <tr>
         <td>Stock #</td>
         <td><%= vehicle.StockNum %></td>

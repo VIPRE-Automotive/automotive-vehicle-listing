@@ -26,6 +26,7 @@ import { URL } from 'url';
 import {
   getActiveInventory, getActiveInventoryItem,
   getActiveInventoryMeta,
+  getInventoryItemImages,
   getInventoryRecommendations, searchActiveInventory
 } from '../database/index.js';
 
@@ -87,7 +88,7 @@ router.get('/', async (request, response) => {
 
   const inventoryMetadata = await getActiveInventoryMeta();
   const {
-    data, count, pages,
+    data = [], count, pages = 0,
   } = await getActiveInventory(
     {key: sort, order},
     (e) => {
@@ -100,7 +101,14 @@ router.get('/', async (request, response) => {
       return true;
     },
     {limit: SEARCH_PAGINATION, offset: (page-1) * SEARCH_PAGINATION}
-  ) || [];
+  ) || {};
+
+  const dataWithImages = await Promise.all(data.map(async (e) => {
+    return {
+      ...e,
+      Images: await getInventoryItemImages(e.StockNum, 1),
+    }
+  }));
 
   const pagination = [];
   for (let i = 1; i <= pages; i++) {
@@ -113,7 +121,7 @@ router.get('/', async (request, response) => {
   }
 
   const oppositeView = cardView === "card" ? "list" : "card";
-  url.searchParams.set("page", page);
+  url.searchParams.set("page", page.toString());
   url.searchParams.set("view", oppositeView);
 
   response.render('search', {
@@ -131,7 +139,7 @@ router.get('/', async (request, response) => {
       nextUrl: page < pages && pagination[page] ? pagination[page].url : null,
       count: count,
     },
-    inventory: data,
+    inventory: dataWithImages,
     inventoryMetadata: inventoryMetadata,
   });
 });
@@ -147,7 +155,14 @@ router.get('/inventory/:StockNum', async (request, response) => {
 
   // Retrieve inventory vehicle
   const vehicle = await getActiveInventoryItem(StockNum, true);
-  const { data: recommendations } = await getInventoryRecommendations(StockNum) || {};
+
+  const { data: recommendations = [] } = await getInventoryRecommendations(StockNum) || {};
+  const recommendationsWithImages = await Promise.all(recommendations.map(async (e) => {
+    return {
+      ...e,
+      Images: await getInventoryItemImages(e.StockNum, 1),
+    }
+  }));
 
   if (!vehicle || vehicle.StockNum !== StockNum) {
     response.status(404).render('error', {});
@@ -161,7 +176,7 @@ router.get('/inventory/:StockNum', async (request, response) => {
       back: referer.indexOf(APPLICATION_URL) !== -1 ? referer : "/",
     },
     vehicle: vehicle,
-    recommendations: recommendations,
+    recommendations: recommendationsWithImages,
   });
 });
 

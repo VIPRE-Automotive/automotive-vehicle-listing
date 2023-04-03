@@ -67,31 +67,24 @@
         <!-- Image Columns -->
         <div class="column has-background-light has-radius-6" style="align-self: flex-start">
           <!-- Main Preview -->
-          <figure class="image is-4by3 has-shadow-1">
-            <img src="https://api.placeholder.app/image/1280x960" alt="Product image" />
+          <figure class="image is-4by3 has-shadow-1 is-pointer" id="active-image">
+            <% if (vehicle.Images instanceof Array && typeof vehicle.Images[0] === "object" && typeof vehicle.Images[0].url === "string") { %>
+              <img src="<%=vehicle.Images[0].url%>>" alt="Product image">
+            <% } else { %>
+              <img src="https://api.placeholder.app/image/1280x960?text=Coming Soon..." alt="Placeholder product image">
+            <% } %>
           </figure>
 
           <!-- Other Images -->
-          <div class="is-flex mt-1">
-            <figure class="image is-96x96 mr-1 has-radius-6">
-              <img src="https://api.placeholder.app/image/256x256" alt="Product image1" />
-            </figure>
-            <figure class="image is-96x96 mr-1 has-radius-6">
-              <img src="https://api.placeholder.app/image/256x256" alt="Product image2" />
-            </figure>
-            <figure class="image is-96x96 mr-1 has-radius-6">
-              <img src="https://api.placeholder.app/image/256x256" alt="Product image3" />
-            </figure>
-            <figure class="image is-96x96 mr-1 has-radius-6">
-              <img src="https://api.placeholder.app/image/256x256" alt="Product image4" />
-            </figure>
-            <figure class="image is-96x96 mr-1 has-radius-6">
-              <img src="https://api.placeholder.app/image/256x256" alt="Product image5" />
-            </figure>
-            <figure class="image is-96x96 mr-1 has-radius-6">
-              <img src="https://api.placeholder.app/image/256x256" alt="Product image6" />
-            </figure>
-          </div>
+          <% if (vehicle.Images instanceof Array && vehicle.Images.length > 1) { %>
+            <div class="is-flex mt-1" id="inactive-images">
+              <% vehicle.Images.forEach((image, index) => { %>
+                <figure class="image is-pointer pt-0 is-4by3 mr-1 has-radius-6" style="width: 128px; height: 96px">
+                  <img src="<%=image.url%>" alt="Product image <%=index%>" />
+                </figure>
+              <% }) %>
+            </div>
+          <% } %>
 
           <!-- Share Card -->
           <div class="card is-static mt-3">
@@ -233,6 +226,12 @@
         // Update UI
         document.querySelector("#interest-modal").classList.remove("is-active");
       };
+      document.querySelectorAll("#inactive-images img").forEach(e => {
+        const mainImage = document.querySelector("#active-image img")
+        e.onclick = () => {
+          mainImage.src = e.src;
+        };
+      });
     </script>
   </body>
 </html>
