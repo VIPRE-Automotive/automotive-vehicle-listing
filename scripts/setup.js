@@ -22,16 +22,12 @@
 // Imports
 import dotenv from 'dotenv';
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from 'firebase/database';
+import { getDatabase, ref as dRef, set } from 'firebase/database';
+import { getStorage, ref as sRef, uploadString } from "firebase/storage";
+import { faker } from '@faker-js/faker';
+import fetch from 'node-fetch';
 
-// Pull configuration file
 dotenv.config();
-
-// Brief validation
-if (!process.env.FIREBASE_API_KEY) {
-  console.warn("FIREBASE_API_KEY not set. Did you forget to create the .env file?");
-  process.exit(0);
-}
 
 const configuration = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -45,34 +41,106 @@ const configuration = {
 
 // Setup Handles
 const firebase = initializeApp(configuration);
+
+const generateImages = (count = 5) => {
+  const images = [];
+
+  for (let i = 0; i < count; i++) {
+    images.push(faker.image.image(1280, 960, true));
+  }
+
+  return images;
+};
+
+/**
+ * Generate N vehicle objects
+ *
+ * @param {number} [count]
+ * @returns {object} { vehicles: [], years: Set, makes: Set }
+ */
+const generateVehicles = (count = 30) => {
+  const vehicles = {};
+  const yearMakeArray = [];
+
+  for (let i = 0; i < count; i++) {
+    const price = faker.finance.amount(10000, 50000, 0);
+    const year = Math.floor(Math.random() * (2023 - 2008) + 2008);
+    const make = faker.vehicle.manufacturer();
+    const mpg = Math.floor(Math.random() * (40 - 11) + 11);
+    const uuid = faker.datatype.uuid();
+
+    // Add to vehicles array
+    vehicles[uuid] = {
+      StockNum: uuid,
+      Sold: Math.random() < 0.2,
+      ModelYear: year,
+      Make: make,
+      Model: faker.vehicle.model(),
+      Trim: ["M", "SE", "S", "Sport", "Lariat", "LT"][Math.floor(Math.random() * 6)],
+      Transmission: Math.random() < 0.5 ? "Automatic" : "Manual",
+      Drivetrain: ["AWD", "FWD", "RWD"][Math.floor(Math.random() * 3)],
+      Price: price,
+      MSRP: (parseInt(price) + Math.floor(Math.random() * 5000) + 1000).toString(),
+      VIN: faker.vehicle.vin(),
+      IntColor: [
+        faker.vehicle.color(),
+        faker.color.rgb({ format: 'hex', casing: 'lower' })
+      ],
+      ExtColor: [
+        faker.vehicle.color(),
+        faker.color.rgb({ format: 'hex', casing: 'lower' })
+      ],
+      Owners: Math.floor(Math.random() * 3) + 1,
+      EPA: {
+        "City": mpg,
+        "Highway": mpg + Math.floor(Math.random() * 5)
+      },
+      Odometer: Math.floor(Math.random() * 100000),
+    };
+
+    // Add to metadata sets
+    yearMakeArray.push({ModelYear: year, Make: make});
+  }
+
+  return {
+    vehicles,
+    metadata: {
+      Makes: yearMakeArray.reduce((acc, value) => {
+        acc[value.Make] = (acc[value.Make] || 0) + 1;
+        return acc;
+      }, {}),
+      ModelYears: yearMakeArray.reduce((acc, value) => {
+        acc[value.ModelYear] = (acc[value.ModelYear] || 0) + 1;
+        return acc;
+      }, {}),
+    }
+  };
+};
+
+// Generate Vehicles
 const db = getDatabase(firebase);
+const {
+  vehicles,
+  metadata
+} = generateVehicles();
+set(dRef(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), vehicles);
+set(dRef(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY_META), metadata);
 
-// Generate 32 vehicles
-for (let i = 0; i < 33; i++) {
-  const price = Math.floor(Math.random() * 50000) + 10000;
+// Generate Images for Each Vehicle
+const storage = getStorage(firebase);
+Object.keys(vehicles).forEach((uuid) => {
+  const images = generateImages(3);
 
-  set(ref(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY + "/" + (i+1)), {
-    Sold: Math.random() < 0.2,
-    StockNum: i+1,
-    ModelYear: Math.floor(Math.random() * (2023 - 2017) + 2016),
-    Make: ["BMW", "Toyota", "Nissan", "Honda", "Ford", "Chevrolet"][Math.floor(Math.random() * 6)],
-    Model: ["X5", "Camry", "Altima", "Civic", "F-150", "Silverado"][Math.floor(Math.random() * 6)],
-    Trim: ["M", "SE", "S", "Sport", "Lariat", "LT"][Math.floor(Math.random() * 6)],
-    Transmission: Math.random() < 0.5 ? "Automatic" : "Manual",
-    Drivetrain: ["AWD", "FWD", "RWD"][Math.floor(Math.random() * 3)],
-    Price: price,
-    MSRP: price + Math.floor(Math.random() * 5000) + 1000,
-    VIN: "T7H29FE0DGK025802",
-    IntColor: ["Black", "#3b3b3b"],
-    ExtColor: ["Jigglypuff", "#ff9ff3"],
-    Owners: Math.floor(Math.random() * 3) + 1,
-    EPA: {
-      "City": 26,
-      "Highway": 32
-    },
-    Odometer: Math.floor(Math.random() * 100000),
-    Images: [],
-  }).then(d => {
-    console.log(`Set StockNum #${i+1}`);
+  images.forEach(async (imageUrl, idx) => {
+    console.log(`Uploading ${imageUrl}...`);
+
+    const ref = sRef(storage, `${process.env.FIREBASE_RTD_ACTIVE_INVENTORY}/${uuid}/${idx}.jpg`);
+    const dataUrl = await fetch(imageUrl)
+      .then(r => r.buffer())
+      .then(buffer => buffer.toString("base64"));
+
+    uploadString(ref, `data:image/jpg;base64,${dataUrl}`, 'data_url', {
+      contentType: 'image/jpg',
+    });
   });
-}
+});
