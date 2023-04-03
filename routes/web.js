@@ -47,15 +47,9 @@ const {
  */
 router.get('/', async (request, response) => {
   const {
-    view: requestCardView,
-    page: requestPage,
-    sort: requestSortKey,
-    order: requestSortOrder,
-    ModelYear: filterModelYear,
-    Make: filterMake,
-    Transmission: filterTransmission,
-    Drivetrain: filterDrivetrain,
-    Availability: filterAvailability,
+    view: requestCardView, page: requestPage, sort: requestSortKey,
+    order: requestSortOrder, ModelYear: filterModelYear, Make: filterMake,
+    Transmission: filterTransmission, Drivetrain: filterDrivetrain, Availability: filterAvailability,
   } = request.query;
   const cardView = ["card", "list"].includes(requestCardView) ? requestCardView : "card"
   const page = parseInt(requestPage) || 1;
@@ -65,21 +59,30 @@ router.get('/', async (request, response) => {
   const makeFilter = filterMake ? filterMake.toString().split(",") : [];
   const availabilityFilter = filterAvailability === "Sold";
 
+  const url = new URL(APPLICATION_URL);
+  if (cardView) url.searchParams.append("view", cardView);
+  if (sort) url.searchParams.append("sort", sort);
+
   const appliedFilters = [];
   if (modelYearFilter.length > 0) {
     appliedFilters.push({key: "ModelYear", value: `Year: ${modelYearFilter.join(", ")}`, raw: modelYearFilter});
+    url.searchParams.set("ModelYear", modelYearFilter.join(","));
   }
   if (makeFilter.length > 0) {
     appliedFilters.push({key: "Make", value: `Make: ${makeFilter.join(", ")}`, raw: makeFilter});
+    url.searchParams.set("Make", makeFilter.join(","));
   }
   if (filterTransmission) {
     appliedFilters.push({key: "Transmission", value: `Transmission: ${filterTransmission}`, raw: filterTransmission});
+    url.searchParams.set("Transmission", filterTransmission);
   }
   if (filterDrivetrain) {
     appliedFilters.push({key: "Drivetrain", value: `Drivetrain: ${filterDrivetrain}`, raw: filterDrivetrain});
+    url.searchParams.set("Drivetrain", filterDrivetrain);
   }
   if (filterAvailability) {
     appliedFilters.push({key: "Availability", value: `Availability: ${filterAvailability}`, raw: filterAvailability});
+    url.searchParams.set("Availability", filterAvailability);
   }
 
   const inventoryMetadata = await getActiveInventoryMeta();
@@ -98,10 +101,6 @@ router.get('/', async (request, response) => {
     },
     {limit: SEARCH_PAGINATION, offset: (page-1) * SEARCH_PAGINATION}
   ) || [];
-
-  const url = new URL(APPLICATION_URL);
-  if (cardView) url.searchParams.append("view", cardView);
-  if (sort) url.searchParams.append("sort", sort);
 
   const pagination = [];
   for (let i = 1; i <= pages; i++) {
@@ -144,17 +143,16 @@ router.get('/', async (request, response) => {
  */
 router.get('/inventory/:StockNum', async (request, response) => {
   const { referer = "" } = request.headers;
+  const { StockNum } = request.params;
 
-  // Validation
-  const StockNum = parseInt(request.params.StockNum) || 0;
-  if (Number.isNaN(StockNum) || StockNum <= 0) {
+  // Retrieve inventory vehicle
+  const vehicle = await getActiveInventoryItem(StockNum, true);
+  const { data: recommendations } = await getInventoryRecommendations(StockNum) || {};
+
+  if (!vehicle || vehicle.StockNum !== StockNum) {
     response.status(404).render('error', {});
     return;
   }
-
-  // Retrieve inventory vehicle
-  const vehicle = await getActiveInventoryItem(StockNum, true) || [];
-  const { data: recommendations } = await getInventoryRecommendations(StockNum) || [];
 
   response.render('listing', {
     env: process.env,

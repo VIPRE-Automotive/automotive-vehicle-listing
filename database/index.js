@@ -19,21 +19,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { initializeApp } from "firebase/app";
-import { getDatabase, onValue, ref as dRef } from 'firebase/database';
-import { getStorage, getDownloadURL, listAll, ref as sRef } from "firebase/storage";
 import dotenv from 'dotenv';
+import { initializeApp } from "firebase/app";
+import {
+  get, query, orderByChild,
+  getDatabase, ref as dRef,
+} from 'firebase/database';
+import {
+  getStorage, getDownloadURL,
+  list, ref as sRef,
+} from "firebase/storage";
 
-// Initialize Firebase
 dotenv.config();
+const {
+  FIREBASE_RTD_ACTIVE_INVENTORY: activeInventory,
+  FIREBASE_RTD_ACTIVE_INVENTORY_META: activeInventoryMetadata,
+  FIREBASE_STO_ACTIVE_INVENTORY: activeInventoryStorage,
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  FIREBASE_MEASUREMENT_ID
+} = process.env;
+
 const appHandle = initializeApp({
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
+  measurementId: FIREBASE_MEASUREMENT_ID
 });
 const database = getDatabase(appHandle);
 const storage = getStorage(appHandle);
@@ -41,7 +59,7 @@ const storage = getStorage(appHandle);
 /**
  * Get all inventory items from the database
  *
- * @param {object} [sort]
+ * @param {object} sort
  * @param {string} [sort.key] sort by key
  * @param {string} [sort.order] sort order
  * @param {function} [filter] vehicle filter function
@@ -51,119 +69,101 @@ const storage = getStorage(appHandle);
  * @return Promise
  * @author Alec M.
  */
-export const getActiveInventory = async (sort, filter = undefined, paginate = {}) => {
-  const { key, order = "asc" } = sort || {};
+export const getActiveInventory = async (sort = {}, filter = undefined, paginate = {}) => {
+  const { key, order } = sort;
   const { limit = 10, offset = 0 } = paginate || {};
+  const records = await get(query(dRef(database, activeInventory), orderByChild(key || "ModelYear")));
 
-  return new Promise((resolve, reject) => {
-    onValue(dRef(database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), (snapshot) => {
-      const d = snapshot.val();
+  if (!records || !records.exists()) {
+    return null;
+  }
 
-      if (d && typeof(d) === "object") {
-        const data = Object.values(d)
-          .filter(e => typeof e === "object")
-          .filter(typeof filter === "function" ? filter : () => true);
-        const count = data.length;
-        const pages = Math.ceil(count / limit);
+  const data = [];
+  records.forEach((record) => {
+    const v = record.val();
 
-        resolve({
-          count,
-          pages,
-          data: data
-            .sort((a, b) => {
-              if (!key) { return 0; }
+    if (!v || typeof(v) !== "object") { return; }
+    if (typeof filter === "function" && !filter(v)) { return; }
 
-              return order === "asc"
-                ? a[key].toString().localeCompare(b[key].toString())
-                : b[key].toString().localeCompare(a[key].toString());
-            })
-            .slice(offset, offset + limit)
-        });
-      } else {
-        resolve(null);
-      }
-    }, {onlyOnce: true});
+    data.push(v);
   });
+
+  if (order === "desc") {
+    data.reverse();
+  }
+
+  return {
+    count: data.length,
+    pages: Math.ceil(data.length / (limit === -1 ? data.length : limit)),
+    data: data.slice(offset, offset + (limit === -1 ? data.length : limit))
+  };
 };
 
 /**
  * Gets filtering metadata for the active inventory
  *
- * @returns Promise
+ * Resolves to an object with the following properties:
+ * - Makes: { [make]: [count], ... }
+ * - ModelYears: { [year]: [count], ... }
+ *
+ * @returns Promise<Object>>
  */
 export const getActiveInventoryMeta = async () => {
-  return new Promise((resolve, reject) => {
-    onValue(dRef(database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), (snapshot) => {
-      const d = snapshot.val();
+  const records = await get(dRef(database, activeInventoryMetadata));
 
-      if (d && typeof(d) === "object") {
-        const data = Object.values(d).filter(e => typeof e === "object")
+  if (!records || !records.exists()) {
+    return null;
+  }
 
-        resolve({
-          Makes: data.reduce((acc, value) => {
-            acc[value.Make] = (acc[value.Make] || 0) + 1;
-            return acc;
-          }, {}),
-          ModelYears: data.reduce((acc, value) => {
-            acc[value.ModelYear] = (acc[value.ModelYear] || 0) + 1;
-            return acc;
-          }, {}),
-        });
-      } else {
-        resolve(null);
-      }
-    }, {onlyOnce: true});
-  });
+  return records.val();
 };
 
 /**
  * Find all files in the storage bucket
  *
- * @param {number} StockNum
- * @returns Promise<Array<string>>
+ * Resolves to an array of objects with the following properties:
+ * - name: file name
+ * - url: file download URL
+ *
+ * @param {string} StockNum
+ * @returns Promise<Array<Object>>
  */
-export const getInventoryItemImages = async (StockNum = 0) => {
-  return new Promise((resolve, reject) => {
-    const images = [];
+export const getInventoryItemImages = async (StockNum = "") => {
+  const records = await list(sRef(storage, activeInventoryStorage + "/" + StockNum), {maxResults: 10});
 
-    listAll(sRef(storage, process.env.FIREBASE_STO_ACTIVE_INVENTORY + "/" + StockNum)).then((files) => {
-      files.items.forEach(file => {
-        images.push(file.name);
-      });
+  if (!records?.items || records.items.length === 0) {
+    return [];
+  }
 
-      resolve(images);
-    });
-  });
+  const filledRecords = await Promise.allSettled(records.items.map(async (file) => {
+    const url = await getDownloadURL(file);
+    return { name: file.name, url };
+  }));
+
+  return filledRecords
+    .map(p => p.status === "fulfilled" ? p.value : null)
+    .filter(e => e !== null);
 };
 
 /**
  * Get an active inventory item from the database by StockNum
  *
- * @param {number} StockNum
- * @param {boolean} withImages include vehicle image links
+ * @param {string} StockNum
+ * @param {boolean} [withImages] include vehicle image links
  * @returns Promise<Inventory>
  * @author Alec M.
  */
 export const getActiveInventoryItem = async (StockNum, withImages = false) => {
-  return new Promise((resolve, reject) => {
-    onValue(dRef(database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY + "/" + StockNum), (snapshot) => {
-      const vehicle = snapshot.val();
-      vehicle.Images = [];
+  const record = await get(dRef(database, activeInventory + "/" + StockNum));
 
-      // Pull Images
-      if (withImages) {
-        listAll(sRef(storage, process.env.FIREBASE_STO_ACTIVE_INVENTORY + "/" + StockNum)).then((files) => {
-          files.items.forEach(file => {
-            vehicle.Images.push(file.name);
-          });
+  if (!record || !record.exists()) {
+    return null;
+  }
 
-          resolve(vehicle);
-        });
-      } else {
-        resolve(vehicle);
-      }
-    }, {onlyOnce: true});
-  });
+  return {
+    ...record.val(),
+    Images: withImages ? await getInventoryItemImages(StockNum) : []
+  };
 };
 
 /**
@@ -174,41 +174,37 @@ export const getActiveInventoryItem = async (StockNum, withImages = false) => {
  * @returns Promise<Array<Inventory>>
  */
 export const searchActiveInventory = async (query, limit = 5) => {
-  return new Promise((resolve, reject) => {
-    onValue(dRef(database, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), (snapshot) => {
-      const d = snapshot.val();
-      const results = [];
+  const { data, count } = await getActiveInventory(undefined, undefined, { limit: -1 }) || {};
 
-      if (d && typeof(d) === "object") {
-        Object.values(d).forEach((vehicle) => {
-          const { ModelYear, Make, Model, StockNum } = vehicle;
+  if (!data || !count) {
+    return null;
+  }
 
-          if (results.length >= limit) {
-            return;
-          }
-          if (!vehicle || !ModelYear || !Make || !Model || !StockNum) {
-            return;
-          }
-          if (ModelYear.toString().includes(query) || Make.toLowerCase().includes(query.toLowerCase()) || Model.toLowerCase().includes(query.toLowerCase()) || StockNum.toString().includes(query)) {
-            results.push(vehicle);
-          }
-        });
+  return data.filter((vehicle) => {
+    const { ModelYear, Make, Model, StockNum } = vehicle;
 
-        resolve(results);
-      } else {
-        resolve(null);
-      }
-    }, {onlyOnce: true});
-  });
+    if (!vehicle || !ModelYear || !Make || !Model || !StockNum) {
+      return false;
+    }
+    if (ModelYear.toString().includes(query) || Make.toLowerCase().includes(query.toLowerCase())) {
+      return true;
+    }
+    if (Model.toLowerCase().includes(query.toLowerCase()) || StockNum.includes(query)) {
+      return true;
+    }
+
+    return false;
+  }).slice(0, limit);
 };
 
 /**
  * Generate a list of related/recommended vehicles
  *
- * @param {number} StockNum The StockNum of the vehicle to get recommendations for
+ * @param {string} StockNum The StockNum of the vehicle to get recommendations for
  * @param {number} [limit]
  * @returns Promise<Array<Inventory>>
  */
 export const getInventoryRecommendations = async (StockNum, limit = 3) => {
-  return getActiveInventory(null, null, {limit});
+  // TODO: Create a real recommendation system
+  return getActiveInventory(undefined, undefined, {limit});
 }

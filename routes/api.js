@@ -25,7 +25,7 @@ import ejs from 'ejs';
 import ratelimit from 'express-rate-limit';
 import nodemailer from 'nodemailer';
 import path from 'path';
-import { getActiveInventory, getActiveInventoryItem } from '../database/index.js';
+import { getActiveInventory, getActiveInventoryItem, getActiveInventoryMeta } from '../database/index.js';
 
 const router = express.Router();
 router.use(ratelimit({
@@ -53,12 +53,28 @@ router.get('/', async (request, response) => {
  */
 router.get('/inventory', async (request, response) => {
   // Retrieve all inventory
-  const inventory = await getActiveInventory() || [];
+  const inventory = await getActiveInventory();
 
   response.status(200).json({
     status_code: 200,
-    data: inventory,
-    count: inventory.length,
+    data: inventory?.data,
+    count: inventory?.count,
+    error: null,
+  });
+});
+
+/**
+ * Retrieve all inventory metadata
+ *
+ * @route GET /inventory/metadata
+ */
+router.get('/inventory/metadata', async (request, response) => {
+  // Retrieve all inventory metadata
+  const data = await getActiveInventoryMeta() || {};
+
+  response.status(200).json({
+    status_code: 200,
+    data: data,
     error: null,
   });
 });
@@ -70,8 +86,8 @@ router.get('/inventory', async (request, response) => {
  */
 router.post('/interest', async (request, response) => {
   // Validate StockNum
-  const StockNum = parseInt(request.body.stocknum) || 0;
-  if (Number.isNaN(StockNum) || StockNum <= 0) {
+  const StockNum = request.body.stocknum;
+  if (!StockNum || StockNum.length <= 0) {
     response.status(400).json({
       status_code: 400,
       error: "Invalid stock number",
