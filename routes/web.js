@@ -23,6 +23,7 @@
 import express from 'express';
 import ratelimit from 'express-rate-limit';
 import { URL } from 'url';
+import { cache } from './utils.js';
 import {
   getActiveInventory, getActiveInventoryItem,
   getActiveInventoryMeta,
@@ -149,7 +150,7 @@ router.get('/', async (request, response) => {
  *
  * @author Alec M.
  */
-router.get('/inventory/:StockNum', async (request, response) => {
+router.get('/inventory/:StockNum', cache(100), async (request, response) => {
   const { referer = "" } = request.headers;
   const { StockNum } = request.params;
 
@@ -186,7 +187,7 @@ router.get('/inventory/:StockNum', async (request, response) => {
  *
  * @author Alec M.
  */
-router.get('/search/:query', async (request, response) => {
+router.get('/search/:query', cache(100), async (request, response) => {
   const { query = "" } = request.params;
   let vehicles = [];
 
