@@ -32,9 +32,9 @@ import {
 
 dotenv.config();
 const {
-  FIREBASE_RTD_ACTIVE_INVENTORY: activeInventory,
-  FIREBASE_RTD_ACTIVE_INVENTORY_META: activeInventoryMetadata,
-  FIREBASE_STO_ACTIVE_INVENTORY: activeInventoryStorage,
+  DATABASE_INVENTORY,
+  DATABASE_INVENTORY_METADATA,
+  STORAGE_INVENTORY,
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
   FIREBASE_PROJECT_ID,
@@ -72,7 +72,7 @@ const storage = getStorage(appHandle);
 export const getActiveInventory = async (sort = {}, filter = undefined, paginate = {}) => {
   const { key, order } = sort;
   const { limit = 10, offset = 0 } = paginate || {};
-  const records = await get(query(dRef(database, activeInventory), orderByChild(key || "ModelYear")));
+  const records = await get(query(dRef(database, DATABASE_INVENTORY), orderByChild(key || "ModelYear")));
 
   if (!records || !records.exists()) {
     return null;
@@ -109,7 +109,7 @@ export const getActiveInventory = async (sort = {}, filter = undefined, paginate
  * @returns Promise<Object>>
  */
 export const getActiveInventoryMeta = async () => {
-  const records = await get(dRef(database, activeInventoryMetadata));
+  const records = await get(dRef(database, DATABASE_INVENTORY_METADATA));
 
   if (!records || !records.exists()) {
     return null;
@@ -130,7 +130,7 @@ export const getActiveInventoryMeta = async () => {
  * @returns Promise<Array<Object>>
  */
 export const getInventoryItemImages = async (StockNum = "", limit = 10) => {
-  const records = await list(sRef(storage, activeInventoryStorage + "/" + StockNum), {maxResults: limit});
+  const records = await list(sRef(storage, STORAGE_INVENTORY + "/" + StockNum), {maxResults: limit});
 
   if (!records?.items || records.items.length === 0) {
     return [];
@@ -155,7 +155,7 @@ export const getInventoryItemImages = async (StockNum = "", limit = 10) => {
  * @author Alec M.
  */
 export const getActiveInventoryItem = async (StockNum, withImages = false) => {
-  const record = await get(dRef(database, activeInventory + "/" + StockNum));
+  const record = await get(dRef(database, DATABASE_INVENTORY + "/" + StockNum));
 
   if (!record || !record.exists()) {
     return null;

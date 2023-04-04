@@ -123,8 +123,8 @@ const {
   vehicles,
   metadata
 } = generateVehicles();
-set(dRef(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY), vehicles);
-set(dRef(db, process.env.FIREBASE_RTD_ACTIVE_INVENTORY_META), metadata);
+set(dRef(db, process.env.DATABASE_INVENTORY), vehicles);
+set(dRef(db, process.env.DATABASE_INVENTORY_METADATA), metadata);
 
 // Generate Images for Each Vehicle
 const storage = getStorage(firebase);
@@ -134,7 +134,7 @@ Object.keys(vehicles).forEach((uuid) => {
   images.forEach(async (imageUrl, idx) => {
     console.log(`Uploading ${imageUrl}...`);
 
-    const ref = sRef(storage, `${process.env.FIREBASE_RTD_ACTIVE_INVENTORY}/${uuid}/${idx}.jpg`);
+    const ref = sRef(storage, `${process.env.DATABASE_INVENTORY}/${uuid}/${idx}.jpg`);
     const dataUrl = await fetch(imageUrl)
       .then(r => r.buffer())
       .then(buffer => buffer.toString("base64"));

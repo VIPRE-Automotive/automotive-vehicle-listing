@@ -13,7 +13,7 @@ This is a comprehensive Automotive Vehicle Catalog/Listing application. The fron
   - "Share with a friend" QR code
   - Key feature highlighting
 - Call-To-Action email form
-- ... Etc
+- ... More to come
 
 # Previews
 
@@ -21,78 +21,72 @@ This is a comprehensive Automotive Vehicle Catalog/Listing application. The fron
 ![interest-form](https://user-images.githubusercontent.com/38357871/229307858-86845c48-f5b9-478c-b9ba-e95d97422fe7.png)
 ![listing](https://user-images.githubusercontent.com/38357871/229307864-dd59726b-639d-4b44-8e43-74965ce1da13.png)
 
-# Setup
+# Getting Started
 
 ## Basics
 
-1. Get to the root folder
+1. Clone the repository
+   - `git clone https://github.com/amattu2/automotive-vehicle-listing`
+   - `cd automotive-vehicle-listing`
+2. Install dependencies
+   - `npm install`
+3. Fill out the `.env` file with your Google Firebase credentials (copy `.env.example` to `.env`)
+4. Setup your Google Firebase database (See below)
+5. Run the application
+   - `node scipts/setup.js`
+   - `npm start`
+6. Visit <https://localhost:3000>
 
-```bash
-cd /automotive-vehicle-listing
-```
-
-2. Install packages
-
-```bash
-npm install
-```
-
-3. Rename `.env.example` to `.env` and update settings
-
-4. Run Setup
-
-```bash
-npm run setup
-```
-
-(This will create the demo vehicles in your Firebase database)
-
-5. Run server
-
-```bash
-npm start
-```
-
-6. Visit `http://localhost:3000` in your browser
-
-## Firebase
+## Firebase Realtime Database
 
 This application relies on Google Firebase realtime database and storage for basic inventory management. The default structure of the database is below. You can import it directly to Google Firebase.
 
-### Database Engine
+<details>
+  <summary>Rules</summary>
 
-Access rules:
-
-```JSON
-{
-  "rules": {
-    "inventory": {
-      ".read": true,
-      ".write": false,
-      ".indexOn": ["StockNum", "ModelYear", "Make", "Odometer", "Price"]
-    },
-    "metadata": {
-      ".read": true,
-      ".write": false
+  ```JSON
+  {
+    "rules": {
+      "inventory": {
+        ".read": true,
+        ".write": true,
+        ".indexOn": ["StockNum", "ModelYear", "Make", "Odometer", "Price"],
+        "$key": {
+          ".validate": "$key.length > 0 && newData.child('StockNum').exists()",
+          "StockNum": {
+            ".validate": "newData.exists() && newData.isString() && newData.val().length > 0"
+          },
+          "ModelYear":{
+            ".validate": "newData.isNumber() && newData.val() > 1950"
+          },
+          "Odometer":{
+            ".validate": "newData.isNumber() && newData.val() > 0"
+          },
+        }
+      },
+      "metadata": {
+        ".read": true,
+        ".write": true
+      }
     }
   }
-}
-```
+  ```
 
-Database structure
+  > **Warning**: Beyond running the `setup.js` script, neither the `inventory` nor `metadata` nodes need `write` access.
+</details>
 
-```JSON
-{
-  "inventory": [],
-  "inactive-inventory": []
-}
-```
+<details>
+  <summary>Structure</summary>
 
-### Storage Engine
+  ```JSON
+  {
+    "inventory": {},
+    "metadata": {},
+  }
+  ```
+</details>
 
-N/A
-
-# Requirements & Dependencies
+# Dependencies
 
 - Google Firebase
 - Bulma 0.9.4
