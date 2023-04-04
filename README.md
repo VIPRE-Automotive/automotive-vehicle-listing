@@ -32,8 +32,8 @@ This is a comprehensive Automotive Vehicle Catalog/Listing application. The fron
    - `npm install`
 3. Fill out the `.env` file with your Google Firebase credentials (copy `.env.example` to `.env`)
 4. Setup your Google Firebase database (See below)
-5. Run the application
-   - `node scipts/setup.js`
+5. Run the application and seed the database
+   - `node scipts/seed.js`
    - `npm start`
 6. Visit <https://localhost:3000>
 
