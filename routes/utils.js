@@ -1,4 +1,7 @@
 import mcache from 'memory-cache';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * A simple Express cache middleware
@@ -11,7 +14,7 @@ export const cache = (duration) => {
     const key = '__express__' + req.originalUrl || req.url;
     const cache = mcache.get(key);
 
-    if (cache) {
+    if (cache && process.env.NODE_ENV === "production") {
       res.status(304).send(cache);
     } else {
       res.set("Cache-Control", "public, max-age=" + duration);
