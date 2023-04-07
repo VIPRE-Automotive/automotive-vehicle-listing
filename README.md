@@ -72,7 +72,7 @@ This application relies on Google Firebase realtime database and storage for bas
   }
   ```
 
-  > **Warning**: Beyond running the `setup.js` script, neither the `inventory` nor `metadata` nodes need `write` access.
+  > **Warning**: Beyond running the `seed.js` script, neither the `inventory` nor `metadata` nodes need `write` access.
 </details>
 
 <details>
@@ -84,6 +84,29 @@ This application relies on Google Firebase realtime database and storage for bas
     "metadata": {},
   }
   ```
+
+</details>
+
+## Firebase Storage
+
+<details>
+  <summary>Rules</summary>
+
+  ```txt
+  rules_version = '2';
+  service firebase.storage {
+    match /b/{bucket}/o {
+      match /inventory/{stockNum}/{file} {
+        allow read;
+        allow create: if request.resource.size < 5 * 1024 * 1024
+          && request.resource.contentType.matches('image/.*')
+          && firestore.exists(/databases/(default)/documents/inventory/$(stockNum))
+      }
+    }
+  }
+  ```
+
+  > **Warning**: Beyond running the `seed.js` script, the `inventory` folder does not need write access.
 </details>
 
 # Dependencies
@@ -101,8 +124,9 @@ This application relies on Google Firebase realtime database and storage for bas
 - [X] Implement vehicle image gallery
 - [ ] Separate Routes from controller
 - [X] Implement sidebar search filters
-- [ ] Implement inventory listing "Share" card button
+- [ ] Implement inventory listing "Share" card button (mailto link)
 - [X] Implement inventory listing filters:
   - [X] Sold/Available
   - [X] Display type (card/list)
   - [X] Sort by (Price, age, etc)
+- [ ] Click-to-copy VIN and Stock Number on listing page
