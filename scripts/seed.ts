@@ -19,12 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Imports
 import dotenv from 'dotenv';
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref as dRef, set } from 'firebase/database';
 import { getStorage, ref as sRef, uploadString } from "firebase/storage";
 import { faker } from '@faker-js/faker';
+import { Drivetrains, Vehicle } from '../types/global';
 import fetch from 'node-fetch';
 
 dotenv.config();
@@ -52,6 +52,10 @@ const generateImages = (count = 5) => {
   return images;
 };
 
+interface GeneratedVehicle {
+  [key: string]: Vehicle;
+}
+
 /**
  * Generate N vehicle objects
  *
@@ -59,7 +63,7 @@ const generateImages = (count = 5) => {
  * @returns {object} { vehicles: [], years: Set, makes: Set }
  */
 const generateVehicles = (count = 30) => {
-  const vehicles = {};
+  const vehicles: GeneratedVehicle = {};
   const yearMakeArray = [];
 
   for (let i = 0; i < count; i++) {
@@ -78,7 +82,7 @@ const generateVehicles = (count = 30) => {
       Model: faker.vehicle.model(),
       Trim: ["M", "SE", "S", "Sport", "Lariat", "LT"][Math.floor(Math.random() * 6)],
       Transmission: Math.random() < 0.5 ? "Automatic" : "Manual",
-      Drivetrain: ["AWD", "FWD", "RWD"][Math.floor(Math.random() * 3)],
+      Drivetrain: [Drivetrains.AWD, Drivetrains.FWD, Drivetrains.RWD][Math.floor(Math.random() * 3)],
       Price: price,
       MSRP: (parseInt(price) + Math.floor(Math.random() * 5000) + 1000).toString(),
       VIN: faker.vehicle.vin(),
@@ -99,17 +103,17 @@ const generateVehicles = (count = 30) => {
     };
 
     // Add to metadata sets
-    yearMakeArray.push({ModelYear: year, Make: make});
+    yearMakeArray.push({ ModelYear: year, Make: make });
   }
 
   return {
     vehicles,
     metadata: {
-      Makes: yearMakeArray.reduce((acc, value) => {
+      Makes: yearMakeArray.reduce((acc: any, value) => {
         acc[value.Make] = (acc[value.Make] || 0) + 1;
         return acc;
       }, {}),
-      ModelYears: yearMakeArray.reduce((acc, value) => {
+      ModelYears: yearMakeArray.reduce((acc: any, value) => {
         acc[value.ModelYear] = (acc[value.ModelYear] || 0) + 1;
         return acc;
       }, {}),
@@ -134,8 +138,8 @@ const generateVehicles = (count = 30) => {
 
       const ref = sRef(storage, `${process.env.DATABASE_INVENTORY}/${uuid}/${idx}.jpg`);
       const dataUrl = await fetch(imageUrl)
-        .then(r => r.buffer())
-        .then(buffer => buffer.toString("base64"));
+        .then((r: any) => r.buffer())
+        .then((buffer: Buffer) => buffer.toString("base64"));
 
       uploadString(ref, `data:image/jpg;base64,${dataUrl}`, 'data_url', {
         contentType: 'image/jpg',

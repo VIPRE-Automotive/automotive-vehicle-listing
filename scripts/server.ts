@@ -19,22 +19,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Imports
-import express from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
-import { web, api } from "../routes/index.js";
+import routes from "../routes/index";
 
 dotenv.config();
-const app = express();
-const PORT = process.env.PORT || 3000;
+const app: Express = express();
+const PORT: number|string = process.env.PORT || 3000;
 
+app.set("view engine", "ejs");
+app.set("views", "views");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.set("view engine", "ejs");
-app.set("views", "views");
-app.use("/", web);
-app.use("/api/v1", api);
+app.use(routes);
 
 app.listen(PORT, () => {
   console.log(`Listening on: http://localhost:${PORT}`);

@@ -2,16 +2,17 @@
   "name": "automotive-vehicle-listing",
   "version": "1.0.0",
   "description": "An automotive inventory catalog listing project built with Node.js, EJS, and Bulma.",
-  "main": "server.js",
-  "type": "module",
+  "main": "dist/scripts/server.js",
   "private": true,
   "engines": {
     "node": ">=14.0.0"
   },
   "scripts": {
-    "start": "nodemon scripts/start.js",
-    "seed": "node scripts/seed.js",
-    "reindex": "node scripts/reindex.js"
+    "build": "tsc",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/scripts/server.js\"",
+    "start": "nodemon dist/scripts/server.js",
+    "seed": "npm run build && node dist/scripts/seed.js",
+    "reindex": "npm run build && node dist/scripts/reindex.js"
   },
   "keywords": [],
   "author": "Alec M.",
@@ -23,11 +24,19 @@
     "express-rate-limit": "^6.7.0",
     "firebase": "^9.19.1",
     "memory-cache": "^0.2.0",
-    "nodemailer": "^6.9.1",
-    "nodemon": "^2.0.22"
+    "nodemailer": "^6.9.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
-    "node-fetch": "^3.3.1"
+    "@types/ejs": "^3.1.2",
+    "@types/express": "^4.17.17",
+    "@types/memory-cache": "^0.2.2",
+    "@types/node": "^18.15.11",
+    "@types/node-fetch": "^2.6.3",
+    "@types/nodemailer": "^6.4.7",
+    "concurrently": "^8.0.1",
+    "node-fetch": "^2.6.9",
+    "nodemon": "^2.0.22",
+    "typescript": "^5.0.4"
   }
 }

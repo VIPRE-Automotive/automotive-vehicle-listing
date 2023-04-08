@@ -1,8 +1,8 @@
 /*
- * Produced: Tue Apr 04 2023
+ * Produced: Fri Jan 21 2022
  * Author: Alec M.
  * GitHub: https://amattu.com/links/github
- * Copyright: (C) 2023 Alec M.
+ * Copyright: (C) 2022 Alec M.
  * License: License GNU Affero General Public License v3.0
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,14 @@
 import dotenv from 'dotenv';
 import { initializeApp } from "firebase/app";
 import {
-  get, set,
-  getDatabase, ref,
-} from 'firebase/database';
+  getStorage, getDownloadURL,
+  list, ref,
+} from "firebase/storage";
 
 dotenv.config();
 
 const {
-  DATABASE_INVENTORY,
-  DATABASE_INVENTORY_METADATA,
+  STORAGE_INVENTORY,
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
   FIREBASE_PROJECT_ID,
@@ -50,30 +49,37 @@ const appHandle = initializeApp({
   measurementId: FIREBASE_MEASUREMENT_ID
 });
 
-(async () => {
-  const database = getDatabase(appHandle);
+const storage = getStorage(appHandle);
 
-  console.log("Fetching inventory from:", DATABASE_INVENTORY);
-  const records = await get(ref(database, DATABASE_INVENTORY));
-  const inventory = records.exists() ? Object.values(records.val()) : [];
+export interface VehicleImage {
+  url: string;
+  name: string;
+}
 
-  console.log("Found", inventory.length, "records");
+/**
+ * Find all files in the storage bucket
+ *
+ * Resolves to an array of objects with the following properties:
+ * - name: file name
+ * - url: file download URL
+ *
+ * @param {string} StockNum
+ * @param {number} [limit] max images to return
+ * @returns Promise<VehicleImage[]>
+ */
+export const getInventoryItemImages = async (StockNum: string = "", limit: number = 10): Promise<VehicleImage[]> => {
+  const records = await list(ref(storage, STORAGE_INVENTORY + "/" + StockNum), { maxResults: limit });
 
-  const metadata = {
-    Makes: inventory.reduce((acc, value) => {
-      acc[value.Make] = (acc[value.Make] || 0) + 1;
-      return acc;
-    }, {}),
-    ModelYears: inventory.reduce((acc, value) => {
-      acc[value.ModelYear] = (acc[value.ModelYear] || 0) + 1;
-      return acc;
-    }, {}),
-  };
+  if (!records?.items || records.items.length === 0) {
+    return [];
+  }
 
-  console.log("Updating metadata to:", metadata);
+  const filledRecords = await Promise.allSettled(records.items.map(async (file) => {
+    const url = await getDownloadURL(file);
+    return { name: file.name, url };
+  }));
 
-  await set(ref(database, DATABASE_INVENTORY_METADATA), metadata);
-
-  console.log("Done!");
-  process.exit(0);
-})();
+  return filledRecords
+    .map(p => p.status === "fulfilled" ? p.value : null)
+    .filter(e => e !== null) as VehicleImage[];
+};
