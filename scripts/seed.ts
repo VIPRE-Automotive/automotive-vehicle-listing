@@ -42,6 +42,16 @@ const configuration = {
 // Setup Handles
 const firebase = initializeApp(configuration);
 
+interface GeneratedVehicle {
+  [key: string]: Vehicle;
+}
+
+/**
+ * Generate N image urls
+ *
+ * @param {number} [count] number of images to generate
+ * @returns {string[]} array of image urls
+ */
 const generateImages = (count = 5) => {
   const images = [];
 
@@ -52,24 +62,17 @@ const generateImages = (count = 5) => {
   return images;
 };
 
-interface GeneratedVehicle {
-  [key: string]: Vehicle;
-}
-
 /**
  * Generate N vehicle objects
  *
  * @param {number} [count]
- * @returns {object} { vehicles: [], years: Set, makes: Set }
+ * @returns GeneratedVehicle
  */
-const generateVehicles = (count = 30) => {
+const generateVehicles = (count = 30): GeneratedVehicle => {
   const vehicles: GeneratedVehicle = {};
-  const yearMakeArray = [];
 
   for (let i = 0; i < count; i++) {
     const price = faker.finance.amount(10000, 50000, 0);
-    const year = Math.floor(Math.random() * (2023 - 2008) + 2008);
-    const make = faker.vehicle.manufacturer();
     const mpg = Math.floor(Math.random() * (40 - 11) + 11);
     const uuid = faker.datatype.uuid();
 
@@ -77,8 +80,8 @@ const generateVehicles = (count = 30) => {
     vehicles[uuid] = {
       StockNum: uuid,
       Sold: Math.random() < 0.2,
-      ModelYear: year,
-      Make: make,
+      ModelYear: faker.date.past(10).getFullYear(),
+      Make: faker.vehicle.manufacturer(),
       Model: faker.vehicle.model(),
       Trim: ["M", "SE", "S", "Sport", "Lariat", "LT"][Math.floor(Math.random() * 6)],
       Transmission: Math.random() < 0.5 ? "Automatic" : "Manual",
@@ -101,49 +104,39 @@ const generateVehicles = (count = 30) => {
       },
       Odometer: Math.floor(Math.random() * 100000),
     };
-
-    // Add to metadata sets
-    yearMakeArray.push({ ModelYear: year, Make: make });
   }
 
-  return {
-    vehicles,
-    metadata: {
-      Makes: yearMakeArray.reduce((acc: any, value) => {
-        acc[value.Make] = (acc[value.Make] || 0) + 1;
-        return acc;
-      }, {}),
-      ModelYears: yearMakeArray.reduce((acc: any, value) => {
-        acc[value.ModelYear] = (acc[value.ModelYear] || 0) + 1;
-        return acc;
-      }, {}),
-    }
-  };
+  return vehicles;
 };
 
 (async () => {
   // Generate Vehicles
   const database = getDatabase(firebase);
-  const { vehicles, metadata } = generateVehicles();
+  const vehicles = generateVehicles();
   set(dRef(database, process.env.DATABASE_INVENTORY), vehicles);
-  set(dRef(database, process.env.DATABASE_INVENTORY_METADATA), metadata);
 
   // Generate Images for Each Vehicle
   const storage = getStorage(firebase);
-  Object.keys(vehicles).forEach((uuid) => {
+  await Promise.all(Object.keys(vehicles).map(async (uuid) => {
     const images = generateImages(3);
 
-    images.forEach(async (imageUrl, idx) => {
-      console.log(`Uploading ${imageUrl}...`);
+    await Promise.all(images.map(async (url, index) => {
+      const ref = sRef(storage, `${process.env.STORAGE_INVENTORY}/${uuid}/${index + 1}.jpg`);
 
-      const ref = sRef(storage, `${process.env.DATABASE_INVENTORY}/${uuid}/${idx}.jpg`);
-      const dataUrl = await fetch(imageUrl)
+      console.log(`Fetching image ${url} for ${uuid}...`);
+
+      const dataUrl = await fetch(url)
         .then((r: any) => r.buffer())
         .then((buffer: Buffer) => buffer.toString("base64"));
 
-      uploadString(ref, `data:image/jpg;base64,${dataUrl}`, 'data_url', {
+      console.log(`Uploading image ${url} for ${uuid}...`);
+
+      await uploadString(ref, `data:image/jpg;base64,${dataUrl}`, 'data_url', {
         contentType: 'image/jpg',
       });
-    });
-  });
+    }));
+  }));
+
+  console.log("Done seeding the database");
+  process.exit(0);
 })();

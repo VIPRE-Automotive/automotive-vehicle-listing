@@ -10,8 +10,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/scripts/server.js\"",
-    "start": "nodemon dist/scripts/server.js",
-    "seed": "npm run build && node dist/scripts/seed.js",
+    "start": "npm run build && nodemon dist/scripts/server.js",
+    "seed": "npm run build && node dist/scripts/seed.js && node dist/scripts/reindex.js",
     "reindex": "npm run build && node dist/scripts/reindex.js"
   },
   "keywords": [],

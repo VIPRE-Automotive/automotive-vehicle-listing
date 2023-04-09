@@ -72,6 +72,6 @@ const appHandle = initializeApp({
 
   await set(ref(database, DATABASE_INVENTORY_METADATA), metadata);
 
-  console.log("Done!");
+  console.log("Done reindexing the database");
   process.exit(0);
 })();
