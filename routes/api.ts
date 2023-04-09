@@ -24,9 +24,24 @@ import express, { Request, Response } from 'express';
 import ejs from 'ejs';
 import nodemailer from 'nodemailer';
 import path from 'path';
+import { Parser } from 'json2csv';
 import {
   getInventory, getInventoryItem, getInventoryMeta
 } from '../firebase/database.js';
+import { getInventoryItemImages } from '../firebase/storage.js';
+import { Conditions, Vehicle } from '../types/global.js';
+
+const {
+  APPLICATION_INVENTORY_URL,
+  COMPANY_NAME,
+  COMPANY_ADDRESS_STREET,
+  COMPANY_ADDRESS_CITY,
+  COMPANY_ADDRESS_STATE,
+  COMPANY_ADDRESS_ZIP,
+  COMPANY_ADDRESS_COUNTRY,
+  GOOGLE_LISTING_STORE_CODE,
+  GOOGLE_LISTING_PLACE_ID,
+} = process.env;
 
 const router = express.Router();
 
@@ -58,6 +73,49 @@ router.get('/inventory', async (request: Request, response: Response) => {
     count: inventory?.count,
     error: null,
   });
+});
+
+router.get('/google-feed', async (request: Request, response: Response) => {
+  // Retrieve all inventory
+  const { data } = await getInventory() || { data: [] };
+  const dataWithImages = await Promise.all(data.map(async (e) => {
+    return { ...e, Images: await getInventoryItemImages(e.StockNum, 1) }
+  }));
+
+
+  const parser = new Parser({
+    fields: [
+      { label: "vin", value: "VIN" },
+      { label: "id", value: "StockNum" },
+      { label: "store_code", value: () => GOOGLE_LISTING_STORE_CODE },
+      { label: "place_id", value: () => GOOGLE_LISTING_PLACE_ID },
+      { label: "dealership_name", value: () => COMPANY_NAME },
+      { label: "dealership_address", value: () => `${COMPANY_ADDRESS_STREET}, ${COMPANY_ADDRESS_CITY}, ${COMPANY_ADDRESS_STATE} ${COMPANY_ADDRESS_ZIP}, ${COMPANY_ADDRESS_COUNTRY}`},
+      { label: "image_link", value: "Images.0.url" },
+      { label: "link", value: (r: Vehicle) => `${APPLICATION_INVENTORY_URL}/${r.StockNum}` },
+      { label: "price", value: (r: Vehicle) => parseFloat(r.Price).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }) },
+      { label: "condition", value: "Condition", default: Conditions.New },
+      { label: "make", value: "Make" },
+      { label: "model", value: "Model" },
+      { label: "trim", value: "Trim" },
+      { label: "year", value: "Year" },
+      { label: "mileage", value: (r: Vehicle) => (Math.round(Number(r.Odometer) / 100) * 100).toLocaleString() },
+      { label: "exterior_color", value: "ExtColor.0" },
+      { label: "interior_color", value: "IntColor.0" },
+      { label: "body_style", value: "BodyStyle" },
+      { label: "vehicle_option", value: (r: Vehicle) => r.Options?.join(", ") },
+      { label: "drive_train", value: "DriveTrain"},
+      { label: "engine", value: "Engine" },
+      { label: "fuel", value: "FuelType" },
+      { label: "transmission", value: "Transmission" },
+    ],
+    header: true,
+  });
+
+  response.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  response.set('Content-Type', 'text/csv');
+  response.set('Content-Disposition', 'attachment; filename="feed.csv"');
+  response.status(200).send(parser.parse(dataWithImages));
 });
 
 /**
