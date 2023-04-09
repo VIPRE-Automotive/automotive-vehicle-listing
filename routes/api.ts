@@ -20,25 +20,22 @@
  */
 
 // Imports
-import express from 'express';
+import express, { Request, Response } from 'express';
 import ejs from 'ejs';
-import ratelimit from 'express-rate-limit';
 import nodemailer from 'nodemailer';
 import path from 'path';
-import { getActiveInventory, getActiveInventoryItem, getActiveInventoryMeta } from '../database/index.js';
+import {
+  getInventory, getInventoryItem, getInventoryMeta
+} from '../firebase/database.js';
 
 const router = express.Router();
-router.use(ratelimit({
-  windowMs: 15 * 1000,
-  max: 5
-}));
 
 /**
  * Root API directory
  *
  * @route GET /
  */
-router.get('/', async (request, response) => {
+router.get('/', async (request: Request, response: Response) => {
   response.status(404).json({
     status_code: 404,
     data: null,
@@ -51,9 +48,9 @@ router.get('/', async (request, response) => {
  *
  * @route GET /inventory
  */
-router.get('/inventory', async (request, response) => {
+router.get('/inventory', async (request: Request, response: Response) => {
   // Retrieve all inventory
-  const inventory = await getActiveInventory();
+  const inventory = await getInventory();
 
   response.status(200).json({
     status_code: 200,
@@ -68,9 +65,9 @@ router.get('/inventory', async (request, response) => {
  *
  * @route GET /inventory/metadata
  */
-router.get('/inventory/metadata', async (request, response) => {
+router.get('/inventory/metadata', async (request: Request, response: Response) => {
   // Retrieve all inventory metadata
-  const data = await getActiveInventoryMeta() || {};
+  const data = await getInventoryMeta() || {};
 
   response.status(200).json({
     status_code: 200,
@@ -84,7 +81,7 @@ router.get('/inventory/metadata', async (request, response) => {
  *
  * @route POST /interest
  */
-router.post('/interest', async (request, response) => {
+router.post('/interest', async (request: Request, response: Response) => {
   // Validate StockNum
   const StockNum = request.body.stocknum;
   if (!StockNum || StockNum.length <= 0) {
@@ -116,7 +113,7 @@ router.post('/interest', async (request, response) => {
   }
 
   // Check if vehicle exists
-  const vehicle = await getActiveInventoryItem(StockNum, false) || [];
+  const vehicle = await getInventoryItem(StockNum, false);
   if (!vehicle) {
     response.status(400).json({
       status_code: 400,
@@ -133,8 +130,8 @@ router.post('/interest', async (request, response) => {
       request: request.body,
     });
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
+      host: process.env.EMAIL_HOST || "",
+      port: parseInt(process.env.EMAIL_PORT || ""),
       auth: {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD
@@ -147,7 +144,7 @@ router.post('/interest', async (request, response) => {
       subject: `Vehicle Interest - ${vehicle.ModelYear} ${vehicle.Make} ${vehicle.Model}`,
       html: template,
       text: "Your email provider does not support HTML content."
-    }, null);
+    });
 
     response.status(200).json({
       status_code: 200,

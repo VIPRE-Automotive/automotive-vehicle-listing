@@ -20,43 +20,53 @@
  */
 
 // Imports
-import express from 'express';
-import ratelimit from 'express-rate-limit';
+import express, { Request, Response } from 'express';
 import { URL } from 'url';
+import { Vehicle } from '../types/global';
 import { cache } from './utils.js';
 import {
-  getActiveInventory, getActiveInventoryItem,
-  getActiveInventoryMeta,
-  getInventoryItemImages,
+  SortOrder,
+  getInventory, getInventoryItem,
+  getInventoryMeta,
   getInventoryRecommendations, searchActiveInventory
-} from '../database/index.js';
+} from '../firebase/database';
+import { getInventoryItemImages } from '../firebase/storage';
+
 
 const router = express.Router();
-router.use(ratelimit({
-  windowMs: 15 * 1000,
-  max: 5
-}));
 
 const {
   APPLICATION_URL = "",
   SEARCH_PAGINATION,
 } = process.env;
 
+type SearchQuery = {
+  view: string,
+  page: string,
+  sort: string,
+  order: string,
+  ModelYear: string,
+  Make: string,
+  Transmission: string,
+  Drivetrain: string,
+  Availability: string,
+};
+
 /**
  * Root Search View
  *
  * @author Alec M.
  */
-router.get('/', async (request, response) => {
+router.get('/', async (request: Request, response: Response) => {
   const {
     view: requestCardView, page: requestPage, sort: requestSortKey,
     order: requestSortOrder, ModelYear: filterModelYear, Make: filterMake,
     Transmission: filterTransmission, Drivetrain: filterDrivetrain, Availability: filterAvailability,
-  } = request.query;
+  } = request.query as SearchQuery;
   const cardView = ["card", "list"].includes(requestCardView) ? requestCardView : "card"
   const page = parseInt(requestPage) || 1;
-  const sort = ["ModelYear", "Make", "Odometer", "Price"].includes(requestSortKey) ? requestSortKey : null;
-  const order = ["asc", "desc"].includes(requestSortOrder) ? requestSortOrder : null;
+  const sort = ["ModelYear", "Make", "Odometer", "Price"].includes(requestSortKey) ? requestSortKey : "ModelYear";
+  const order = requestSortOrder == SortOrder.ASC ? SortOrder.ASC : SortOrder.DESC;
   const modelYearFilter = filterModelYear ? filterModelYear.toString().split(",") : [];
   const makeFilter = filterMake ? filterMake.toString().split(",") : [];
   const availabilityFilter = filterAvailability === "Sold";
@@ -67,32 +77,32 @@ router.get('/', async (request, response) => {
 
   const appliedFilters = [];
   if (modelYearFilter.length > 0) {
-    appliedFilters.push({key: "ModelYear", value: `Year: ${modelYearFilter.join(", ")}`, raw: modelYearFilter});
+    appliedFilters.push({ key: "ModelYear", value: `Year: ${modelYearFilter.join(", ")}`, raw: modelYearFilter });
     url.searchParams.set("ModelYear", modelYearFilter.join(","));
   }
   if (makeFilter.length > 0) {
-    appliedFilters.push({key: "Make", value: `Make: ${makeFilter.join(", ")}`, raw: makeFilter});
+    appliedFilters.push({ key: "Make", value: `Make: ${makeFilter.join(", ")}`, raw: makeFilter });
     url.searchParams.set("Make", makeFilter.join(","));
   }
   if (filterTransmission) {
-    appliedFilters.push({key: "Transmission", value: `Transmission: ${filterTransmission}`, raw: filterTransmission});
+    appliedFilters.push({ key: "Transmission", value: `Transmission: ${filterTransmission}`, raw: filterTransmission });
     url.searchParams.set("Transmission", filterTransmission);
   }
   if (filterDrivetrain) {
-    appliedFilters.push({key: "Drivetrain", value: `Drivetrain: ${filterDrivetrain}`, raw: filterDrivetrain});
+    appliedFilters.push({ key: "Drivetrain", value: `Drivetrain: ${filterDrivetrain}`, raw: filterDrivetrain });
     url.searchParams.set("Drivetrain", filterDrivetrain);
   }
   if (filterAvailability) {
-    appliedFilters.push({key: "Availability", value: `Availability: ${filterAvailability}`, raw: filterAvailability});
+    appliedFilters.push({ key: "Availability", value: `Availability: ${filterAvailability}`, raw: filterAvailability });
     url.searchParams.set("Availability", filterAvailability);
   }
 
-  const inventoryMetadata = await getActiveInventoryMeta();
+  const inventoryMetadata = await getInventoryMeta();
   const {
     data = [], count, pages = 0,
-  } = await getActiveInventory(
-    {key: sort, order},
-    (e) => {
+  } = await getInventory(
+    { key: sort, order },
+    (e: Vehicle) => {
       if (modelYearFilter.length > 0 && !modelYearFilter.includes(e.ModelYear.toString())) return false;
       if (makeFilter.length > 0 && !makeFilter.includes(e.Make)) return false;
       if (filterTransmission && e.Transmission !== filterTransmission) return false;
@@ -101,7 +111,7 @@ router.get('/', async (request, response) => {
 
       return true;
     },
-    {limit: SEARCH_PAGINATION, offset: (page-1) * SEARCH_PAGINATION}
+    { limit: parseInt(SEARCH_PAGINATION || "0"), offset: (page - 1) * parseInt(SEARCH_PAGINATION || "0") }
   ) || {};
 
   const dataWithImages = await Promise.all(data.map(async (e) => {
@@ -136,7 +146,7 @@ router.get('/', async (request, response) => {
       page: page,
       pages: pages,
       pagination: pagination,
-      prevUrl: page > 1 && pagination[page-2] ? pagination[page-2].url : null,
+      prevUrl: page > 1 && pagination[page - 2] ? pagination[page - 2].url : null,
       nextUrl: page < pages && pagination[page] ? pagination[page].url : null,
       count: count,
     },
@@ -150,14 +160,14 @@ router.get('/', async (request, response) => {
  *
  * @author Alec M.
  */
-router.get('/inventory/:StockNum', cache(100), async (request, response) => {
+router.get('/inventory/:StockNum', cache(100), async (request: Request, response: Response) => {
   const { referer = "" } = request.headers;
   const { StockNum } = request.params;
 
   // Retrieve inventory vehicle
-  const vehicle = await getActiveInventoryItem(StockNum, true);
+  const vehicle = await getInventoryItem(StockNum, true);
 
-  const { data: recommendations = [] } = await getInventoryRecommendations(StockNum) || {};
+  const recommendations = await getInventoryRecommendations(StockNum) || [];
   const recommendationsWithImages = await Promise.all(recommendations.map(async (e) => {
     return {
       ...e,
@@ -187,9 +197,9 @@ router.get('/inventory/:StockNum', cache(100), async (request, response) => {
  *
  * @author Alec M.
  */
-router.get('/search/:query', cache(100), async (request, response) => {
+router.get('/search/:query', cache(100), async (request: Request, response: Response) => {
   const { query = "" } = request.params;
-  let vehicles = [];
+  let vehicles: Vehicle[] = [];
 
   if (query.trim() !== "") {
     vehicles = await searchActiveInventory(query) || [];

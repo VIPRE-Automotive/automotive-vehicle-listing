@@ -23,18 +23,16 @@ import dotenv from 'dotenv';
 import { initializeApp } from "firebase/app";
 import {
   get, query, orderByChild,
-  getDatabase, ref as dRef,
+  getDatabase, ref,
 } from 'firebase/database';
-import {
-  getStorage, getDownloadURL,
-  list, ref as sRef,
-} from "firebase/storage";
+import { Metadata, Vehicle } from '../types/global';
+import { VehicleImage, getInventoryItemImages } from './storage';
 
 dotenv.config();
+
 const {
   DATABASE_INVENTORY,
   DATABASE_INVENTORY_METADATA,
-  STORAGE_INVENTORY,
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
   FIREBASE_PROJECT_ID,
@@ -54,41 +52,65 @@ const appHandle = initializeApp({
   measurementId: FIREBASE_MEASUREMENT_ID
 });
 const database = getDatabase(appHandle);
-const storage = getStorage(appHandle);
+
+export interface VehicleWithImages extends Vehicle {
+  Images: VehicleImage[];
+}
+
+export interface SearchResult {
+  count: number;
+  data: Vehicle[];
+  pages: number;
+}
+
+export interface SearchSortArgs {
+  key: string;
+  order?: "asc" | "desc";
+}
+
+export interface SearchPaginateArgs {
+  limit: number;
+  offset?: number;
+}
+
+export enum SortOrder {
+  ASC = "asc",
+  DESC = "desc"
+}
 
 /**
  * Get all inventory items from the database
  *
- * @param {object} sort
+ * @param {SearchSortArgs} sort
  * @param {string} [sort.key] sort by key
- * @param {string} [sort.order] sort order
- * @param {function} [filter] vehicle filter function
- * @param {object} [paginate]
+ * @param {SortOrder} [sort.order] sort order
+ * @param {CallableFunction} [filter] vehicle filter function
+ * @param {SearchPaginateArgs} [paginate]
  * @param {number} [paginate.limit] number of items to return
  * @param {number} [paginate.offset] number of items to skip
- * @return Promise
+ * @return Promise<SearchResult|null>
  * @author Alec M.
  */
-export const getActiveInventory = async (sort = {}, filter = undefined, paginate = {}) => {
-  const { key, order } = sort;
+export const getInventory = async (sort: SearchSortArgs | null = null, filter: CallableFunction | null = null, paginate: SearchPaginateArgs | null = null): Promise<SearchResult | null> => {
+  const { key, order } = sort || {};
   const { limit = 10, offset = 0 } = paginate || {};
-  const records = await get(query(dRef(database, DATABASE_INVENTORY), orderByChild(key || "ModelYear")));
+  const records = await get(query(ref(database, DATABASE_INVENTORY), orderByChild(key || "ModelYear")));
 
   if (!records || !records.exists()) {
     return null;
   }
 
-  const data = [];
+  const data: Array<Vehicle> = [];
   records.forEach((record) => {
     const v = record.val();
 
-    if (!v || typeof(v) !== "object") { return; }
+    if (!v || typeof (v) !== "object") { return; }
     if (typeof filter === "function" && !filter(v)) { return; }
 
     data.push(v);
   });
 
-  if (order === "desc") {
+  if (order === SortOrder.DESC) {
     data.reverse();
   }
 
@@ -102,14 +124,10 @@ export const getActiveInventory = async (sort = {}, filter = undefined, paginate
 /**
  * Gets filtering metadata for the active inventory
  *
- * Resolves to an object with the following properties:
- * - Makes: { [make]: [count], ... }
- * - ModelYears: { [year]: [count], ... }
- *
- * @returns Promise<Object>>
+ * @returns Promise<InventoryMetadata|null>
  */
-export const getActiveInventoryMeta = async () => {
-  const records = await get(dRef(database, DATABASE_INVENTORY_METADATA));
+export const getInventoryMeta = async (): Promise<Metadata | null> => {
+  const records = await get(ref(database, DATABASE_INVENTORY_METADATA));
 
   if (!records || !records.exists()) {
     return null;
@@ -119,43 +137,15 @@ export const getActiveInventoryMeta = async () => {
 };
 
 /**
- * Find all files in the storage bucket
- *
- * Resolves to an array of objects with the following properties:
- * - name: file name
- * - url: file download URL
- *
- * @param {string} StockNum
- * @param {number} [limit] max images to return
- * @returns Promise<Array<Object>>
- */
-export const getInventoryItemImages = async (StockNum = "", limit = 10) => {
-  const records = await list(sRef(storage, STORAGE_INVENTORY + "/" + StockNum), {maxResults: limit});
-
-  if (!records?.items || records.items.length === 0) {
-    return [];
-  }
-
-  const filledRecords = await Promise.allSettled(records.items.map(async (file) => {
-    const url = await getDownloadURL(file);
-    return { name: file.name, url };
-  }));
-
-  return filledRecords
-    .map(p => p.status === "fulfilled" ? p.value : null)
-    .filter(e => e !== null);
-};
-
-/**
  * Get an active inventory item from the database by StockNum
  *
  * @param {string} StockNum
  * @param {boolean} [withImages] include vehicle image links
- * @returns Promise<Inventory>
+ * @returns Promise<Vehicle|VehicleWithImages|null>
  * @author Alec M.
  */
-export const getActiveInventoryItem = async (StockNum, withImages = false) => {
-  const record = await get(dRef(database, DATABASE_INVENTORY + "/" + StockNum));
+export const getInventoryItem = async (StockNum: string, withImages = false): Promise<Vehicle | VehicleWithImages | null> => {
+  const record = await get(ref(database, DATABASE_INVENTORY + "/" + StockNum));
 
   if (!record || !record.exists()) {
     return null;
@@ -172,10 +162,10 @@ export const getActiveInventoryItem = async (StockNum, withImages = false) => {
  *
  * @param {string} query search query
  * @param {number} limit max results
- * @returns Promise<Array<Inventory>>
+ * @returns Promise<Array<Vehicle>>
  */
-export const searchActiveInventory = async (query, limit = 5) => {
-  const { data, count } = await getActiveInventory(undefined, undefined, { limit: -1 }) || {};
+export const searchActiveInventory = async (query: string, limit: number = 5): Promise<Vehicle[] | null> => {
+  const { data, count } = await getInventory(null, null, { limit: -1 }) || {};
 
   if (!data || !count) {
     return null;
@@ -203,9 +193,11 @@ export const searchActiveInventory = async (query, limit = 5) => {
  *
  * @param {string} StockNum The StockNum of the vehicle to get recommendations for
  * @param {number} [limit]
- * @returns Promise<Array<Inventory>>
+ * @returns Promise<Array<Vehicle>>
  */
-export const getInventoryRecommendations = async (StockNum, limit = 3) => {
+export const getInventoryRecommendations = async (StockNum: string, limit = 3): Promise<Vehicle[] | null> => {
   // TODO: Create a real recommendation system
-  return getActiveInventory(undefined, undefined, {limit});
+  const { data } = await getInventory(null, null, { limit }) || {};
+
+  return data || null;
 }
