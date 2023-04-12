@@ -32,7 +32,6 @@ import {
 } from '../firebase/database';
 import { getInventoryItemImages } from '../firebase/storage';
 
-
 const router = express.Router();
 
 const {
