@@ -89,3 +89,7 @@ aside.menu .menu-list li:not(.is-active) > ul {
 .is-pointer img {
   -webkit-user-drag: none;
 }
+
+.is-dotted {
+  border-bottom: 1px dashed;
+}

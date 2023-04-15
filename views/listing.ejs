@@ -97,8 +97,8 @@
                 </div>
                 <div class="media-content">
                   <p class="title is-4 mb-2">Share with a friend</p>
-                  <a class="subtitle is-6" href="<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>">
-                    <%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>
+                  <a class="subtitle is-6" href="<%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %>" target="_blank">
+                    <span data-action="clickToCopy"><%= env.APPLICATION_INVENTORY_URL + "/" + vehicle.StockNum %></span>
                   </a>
                 </div>
               </div>

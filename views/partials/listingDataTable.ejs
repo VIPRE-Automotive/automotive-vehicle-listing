@@ -67,7 +67,9 @@
     <% if (typeof(vehicle.StockNum) === "string") { %>
       <tr>
         <td>Stock #</td>
-        <td><%= vehicle.StockNum %></td>
+        <td>
+          <span data-action="clickToCopy"><%= vehicle.StockNum %></span>
+        </td>
       </tr>
     <% } %>
     <% if (typeof(vehicle.VIN) === "string" && vehicle.VIN.length === 17) { %>

@@ -116,3 +116,37 @@ async function navigationSearch() {
   isNavigationSearching = false;
   return true;
 }
+
+document.querySelectorAll("[data-action='clickToCopy']").forEach((element) => {
+  element.onclick = () => copyToClipboard(element.textContent || element.innerText);
+  element.classList.add("is-dotted", "is-pointer");
+});
+
+/**
+ * Write text to a user's clipboard
+ *
+ * @param {string} text
+ */
+async function copyToClipboard(text) {
+  if (!text) {
+    return;
+  }
+
+  if (document.execCommand && document.execCommand("copy") !== false) {
+    const input = document.createElement("input");
+    input.value = text;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    document.body.removeChild(input);
+    return;
+  } else if (navigator.clipboard) {
+    const permission = await navigator.permissions.query({name: "clipboard-write"});
+    if (permission.state === "granted" || permission.state === "prompt") {
+      await navigator.clipboard.writeText(text);
+    }
+    return;
+  }
+
+  console.warn("No method to copy to clipboard.");
+}

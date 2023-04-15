@@ -130,4 +130,4 @@ This application relies on Google Firebase realtime database and storage for bas
   - [X] Sold/Available
   - [X] Display type (card/list)
   - [X] Sort by (Price, age, etc)
-- [ ] Click-to-copy VIN and Stock Number on listing page
+- [X] Click-to-copy ~~VIN~~ and Stock Number on listing page
