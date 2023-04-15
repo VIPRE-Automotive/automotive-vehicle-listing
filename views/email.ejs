@@ -162,6 +162,12 @@
                   <td><%= vehicle.Model %></td>
                 </tr>
               <% } %>
+              <% if (typeof(vehicle.Engine) === "string" && vehicle.Engine.length > 0) { %>
+                <tr>
+                  <td>Engine</td>
+                  <td><%= vehicle.Engine %></td>
+                </tr>
+              <% } %>
               <% if (typeof(vehicle.Odometer) === "number" && vehicle.Odometer > 0) { %>
                 <tr>
                   <td>Odometer</td>

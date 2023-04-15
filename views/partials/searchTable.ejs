@@ -5,6 +5,7 @@
       <th>Year</th>
       <th>Make</th>
       <th>Model</th>
+      <th>Engine</th>
       <th>Trim</th>
       <th><abbr title="Interior / Exterior">Colors</abbr></th>
       <th>Mileage</th>
@@ -27,7 +28,8 @@
         <td><%= vehicle.ModelYear %></td>
         <td><%= vehicle.Make %></td>
         <td><%= vehicle.Model %></td>
-        <td><%= vehicle.Trim %></td>
+        <td><%= vehicle.Engine || "N/A" %></td>
+        <td><%= vehicle.Trim || "N/A" %></td>
         <td>
           <span>
             <%= vehicle.IntColor[0] %>

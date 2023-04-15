@@ -24,7 +24,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref as dRef, set } from 'firebase/database';
 import { getStorage, ref as sRef, uploadString } from "firebase/storage";
 import { faker } from '@faker-js/faker';
-import { Drivetrains, Vehicle } from '../types/global';
+import { BodyStyle, Conditions, Drivetrains, FuelType, Vehicle } from '../types/global';
 import fetch from 'node-fetch';
 
 dotenv.config();
@@ -72,6 +72,7 @@ const generateVehicles = (count = 30): GeneratedVehicle => {
   const vehicles: GeneratedVehicle = {};
 
   for (let i = 0; i < count; i++) {
+    const ModelYear = faker.date.past(10).getFullYear();
     const price = faker.finance.amount(10000, 50000, 0);
     const mpg = Math.floor(Math.random() * (40 - 11) + 11);
     const uuid = faker.datatype.uuid();
@@ -80,10 +81,11 @@ const generateVehicles = (count = 30): GeneratedVehicle => {
     vehicles[uuid] = {
       StockNum: uuid,
       Sold: Math.random() < 0.2,
-      ModelYear: faker.date.past(10).getFullYear(),
+      ModelYear: ModelYear,
       Make: faker.vehicle.manufacturer(),
       Model: faker.vehicle.model(),
       Trim: ["M", "SE", "S", "Sport", "Lariat", "LT"][Math.floor(Math.random() * 6)],
+      Engine: "4.4L Twin Turbo V8",
       Transmission: Math.random() < 0.5 ? "Automatic" : "Manual",
       Drivetrain: [Drivetrains.AWD, Drivetrains.FWD, Drivetrains.RWD][Math.floor(Math.random() * 3)],
       Price: price,
@@ -103,6 +105,10 @@ const generateVehicles = (count = 30): GeneratedVehicle => {
         "Highway": mpg + Math.floor(Math.random() * 5)
       },
       Odometer: Math.floor(Math.random() * 100000),
+      BodyStyle: faker.vehicle.type() as BodyStyle,
+      Options: [],
+      Condition: ModelYear === new Date().getFullYear() ? Conditions.New : Conditions.Used,
+      FuelType: faker.vehicle.fuel() as FuelType,
     };
   }
 

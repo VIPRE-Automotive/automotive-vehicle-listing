@@ -7,21 +7,21 @@ export interface Vehicle {
   Make: string,
   Model: string,
   Trim: string | null,
-  Engine?: string, // TODO: implement this
+  Engine: string | null,
   Transmission: "Automatic" | "Manual" | null,
   Drivetrain: Drivetrains | null,
   Price: string, // To avoid floating point errors, we store the price as a string
-  MSRP: string, // To avoid floating point errors, we store the price as a string
+  MSRP: string,  // To avoid floating point errors, we store the price as a string
   VIN: string,
   IntColor: string[],
   ExtColor: string[],
   Owners: number,
   EPA: EpaRating,
   Odometer: number,
-  BodyStyle?: BodyStyle, // TODO: implement this
-  Options?: string[],
-  Condition?: Conditions,
-  FuelType?: FuelTypes,
+  BodyStyle: BodyStyle | null,
+  Options: string[],    // TODO: implement this
+  Condition: Conditions | null,
+  FuelType: FuelType | null,
 }
 
 export enum Drivetrains {
@@ -54,7 +54,7 @@ export enum Conditions {
   Used = "Used",
 }
 
-export enum FuelTypes {
+export enum FuelType {
   Gasoline = "Gasoline",
   Diesel = "Diesel",
   Hybrid = "Hybrid",
