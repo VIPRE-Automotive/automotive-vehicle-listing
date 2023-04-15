@@ -26,13 +26,17 @@ import nodemailer from 'nodemailer';
 import path from 'path';
 import { Parser } from 'json2csv';
 import {
+  SortKeys,
+  SortOrder,
   getInventory, getInventoryItem, getInventoryMeta
 } from '../firebase/database.js';
 import { getInventoryItemImages } from '../firebase/storage.js';
-import { Conditions, Vehicle } from '../types/global.js';
+import { Conditions, Vehicle, InventoryRequestQuery } from '../types/global.js';
+import { createTransport } from './utils.js';
 
 const {
   APPLICATION_INVENTORY_URL,
+  SEARCH_PAGINATION,
   COMPANY_NAME,
   COMPANY_ADDRESS_STREET,
   COMPANY_ADDRESS_CITY,
@@ -64,13 +68,51 @@ router.get('/', async (request: Request, response: Response) => {
  * @route GET /inventory
  */
 router.get('/inventory', async (request: Request, response: Response) => {
-  // Retrieve all inventory
-  const inventory = await getInventory();
+  // Extract query parameters
+  const {
+    page: requestPage, sort: requestSortKey, order: requestSortOrder, limit: requestLimit,
+    ModelYear: filterModelYear, Make: filterMake, Transmission: filterTransmission,
+    Drivetrain: filterDrivetrain, Availability: filterAvailability,
+  } = request.query as InventoryRequestQuery;
 
+  // Parse query parameters
+  const limit = parseInt(requestLimit) || parseInt(SEARCH_PAGINATION || "0");
+  const page = parseInt(requestPage) || 1;
+  const sort = Object.values(SortKeys).includes(requestSortKey) ? requestSortKey : SortKeys.MODEL_YEAR;
+  const order = requestSortOrder === SortOrder.ASC ? SortOrder.ASC : SortOrder.DESC;
+  const modelYearFilter = filterModelYear ? filterModelYear.toString().split(",") : [];
+  const makeFilter = filterMake ? filterMake.toString().split(",") : [];
+  const availabilityFilter = filterAvailability === "Sold";
+
+  // Create filter function
+  const filterFunction = (e: Vehicle) => {
+    if (modelYearFilter.length > 0 && !modelYearFilter.includes(e.ModelYear.toString())) return false;
+    if (makeFilter.length > 0 && !makeFilter.includes(e.Make)) return false;
+    if (filterTransmission && e.Transmission !== filterTransmission) return false;
+    if (filterDrivetrain && e.Drivetrain !== filterDrivetrain) return false;
+    if (filterAvailability && e.Sold !== availabilityFilter) return false;
+
+    return true;
+  };
+
+  // Fetch inventory data
+  const sortOptions = { key: sort, order };
+  const paginationLimit = limit > 0 && limit <= (parseInt(SEARCH_PAGINATION || "0") * 2) ? limit : parseInt(SEARCH_PAGINATION || "0");
+  const paginationOptions = { limit: paginationLimit, offset: (page - 1) * paginationLimit };
+  const { data, count } = await getInventory(sortOptions, filterFunction, paginationOptions) || { data: [], count: 0 };
+  const dataWithExtras = await Promise.all(data.map(async (item: any) => {
+    return {
+      ...item,
+      link: `${process.env.APPLICATION_INVENTORY_URL}/${item.StockNum}`,
+      Images: await getInventoryItemImages(item.StockNum, 1),
+    };
+  }));
+
+  response.set("Access-Control-Allow-Origin", "*")
   response.status(200).json({
     status_code: 200,
-    data: inventory?.data,
-    count: inventory?.count,
+    data: dataWithExtras,
+    count: count,
     error: null,
   });
 });
@@ -81,7 +123,6 @@ router.get('/google-feed', async (request: Request, response: Response) => {
   const dataWithImages = await Promise.all(data.map(async (e) => {
     return { ...e, Images: await getInventoryItemImages(e.StockNum, 1) }
   }));
-
 
   const parser = new Parser({
     fields: [
@@ -187,15 +228,9 @@ router.post('/interest', async (request: Request, response: Response) => {
       vehicle: vehicle,
       request: request.body,
     });
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST || "",
-      port: parseInt(process.env.EMAIL_PORT || ""),
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-    const status = await transporter.sendMail({
+
+    const transporter = createTransport();
+    await transporter.sendMail({
       from: process.env.EMAIL_USERNAME,
       to: Email,
       bcc: process.env.COMPANY_EMAIL,
@@ -203,17 +238,17 @@ router.post('/interest', async (request: Request, response: Response) => {
       html: template,
       text: "Your email provider does not support HTML content."
     });
-
-    response.status(200).json({
-      status_code: 200,
-      error: null,
-    });
   } catch (e) {
     response.status(500).json({
       status_code: 500,
       error: "Internal Server Error",
     });
   };
+
+  response.status(200).json({
+    status_code: 200,
+    error: null,
+  });
 });
 
 export default router;

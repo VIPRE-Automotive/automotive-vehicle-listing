@@ -124,7 +124,6 @@ This application relies on Google Firebase realtime database and storage for bas
 - [X] Fix live vehicle search box
 - [ ] Finish "Similar Vehicles" recommendation system
 - [X] Implement vehicle image gallery
-- [ ] Separate Routes from controller
 - [X] Implement sidebar search filters
 - [ ] Implement inventory listing "Share" card button (mailto link)
 - [X] Implement inventory listing filters:

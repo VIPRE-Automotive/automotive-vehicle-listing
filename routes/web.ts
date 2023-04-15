@@ -22,7 +22,7 @@
 // Imports
 import express, { Request, Response } from 'express';
 import { URL } from 'url';
-import { Vehicle } from '../types/global';
+import { InventoryRequestQuery, Vehicle } from '../types/global';
 import { cache } from './utils.js';
 import {
   SortOrder,
@@ -39,16 +39,13 @@ const {
   SEARCH_PAGINATION,
 } = process.env;
 
-type SearchQuery = {
-  view: string,
-  page: string,
-  sort: string,
-  order: string,
-  ModelYear: string,
-  Make: string,
-  Transmission: string,
-  Drivetrain: string,
-  Availability: string,
+enum ViewType {
+  CARD = "card",
+  LIST = "list",
+};
+
+type CustomInventoryRequestQuery = InventoryRequestQuery & {
+  view?: string;
 };
 
 /**
@@ -61,8 +58,9 @@ router.get('/', async (request: Request, response: Response) => {
     view: requestCardView, page: requestPage, sort: requestSortKey,
     order: requestSortOrder, ModelYear: filterModelYear, Make: filterMake,
     Transmission: filterTransmission, Drivetrain: filterDrivetrain, Availability: filterAvailability,
-  } = request.query as SearchQuery;
-  const cardView = ["card", "list"].includes(requestCardView) ? requestCardView : "card"
+  } = request.query as CustomInventoryRequestQuery;
+
+  const cardView = ViewType.LIST === requestCardView ? ViewType.LIST : ViewType.CARD;
   const page = parseInt(requestPage) || 1;
   const sort = ["ModelYear", "Make", "Odometer", "Price"].includes(requestSortKey) ? requestSortKey : "ModelYear";
   const order = requestSortOrder == SortOrder.ASC ? SortOrder.ASC : SortOrder.DESC;

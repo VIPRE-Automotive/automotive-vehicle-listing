@@ -78,6 +78,13 @@ export enum SortOrder {
   DESC = "desc"
 }
 
+export enum SortKeys {
+  MODEL_YEAR = "ModelYear",
+  MAKE = "Make",
+  ODOMETER = "Odometer",
+  PRICE = "Price",
+};
+
 /**
  * Get all inventory items from the database
  *
@@ -94,7 +101,7 @@ export enum SortOrder {
 export const getInventory = async (sort: SearchSortArgs | null = null, filter: CallableFunction | null = null, paginate: SearchPaginateArgs | null = null): Promise<SearchResult | null> => {
   const { key, order } = sort || {};
   const { limit = 10, offset = 0 } = paginate || {};
-  const records = await get(query(ref(database, DATABASE_INVENTORY), orderByChild(key || "ModelYear")));
+  const records = await get(query(ref(database, DATABASE_INVENTORY), orderByChild(key || SortKeys.MODEL_YEAR)));
 
   if (!records || !records.exists()) {
     return null;

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import mcache from 'memory-cache';
 import dotenv from 'dotenv';
+import nodemailer, { Transporter } from 'nodemailer';
 
 dotenv.config();
 
@@ -33,4 +34,20 @@ export const cache: CallableFunction = (duration: number) => {
       next();
     }
   }
+};
+
+/**
+ * Generate a configured nodemailer transporter
+ *
+ * @returns {Transporter}
+ */
+export const createTransport = (): Transporter => {
+  return nodemailer.createTransport({
+    host: process.env.EMAIL_HOST || "",
+    port: parseInt(process.env.EMAIL_PORT || ""),
+    auth: {
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  });
 };

@@ -1,3 +1,5 @@
+import { SortKeys } from "../firebase/database";
+
 export interface Vehicle {
   StockNum: string,
   Sold: boolean,
@@ -72,3 +74,15 @@ export interface MetadataMake {
 export interface MetadataYear {
   [year: string]: number;
 }
+
+export type InventoryRequestQuery = {
+  page: string,
+  sort: SortKeys,
+  order: string,
+  limit: string,
+  ModelYear: string,
+  Make: string,
+  Transmission: string,
+  Drivetrain: string,
+  Availability: string,
+};
